@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
-
 const Uep = require('../../Model/uep')
 
-router.post('/', (req, res, next) => {
+router.put('/', (req, res, next) => {
+    
+    const { id } = req.body;
 
-    Uep.create(req.body)
+    Uep.update(req.body, {
+        where: {
+            id
+        }
+    })
     .then((data) => {
-        return res.status(201).json({
+        return res.status(200).json({
             error: false,
             data
         })
@@ -15,10 +20,9 @@ router.post('/', (req, res, next) => {
     .catch(() => {
         return res.status(400).json({
             error: true,
-            msg: "Error: Não adad"
+            msg: "Ocorreu um erro"
         })
     })
-
 })
 
 module.exports = router;

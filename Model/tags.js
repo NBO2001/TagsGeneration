@@ -9,16 +9,12 @@ const Tags = db.define('tags', {
         primaryKey: true,
     },
     uep: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
             notEmpty: {
                 msg: "Filder Empty",
                 arg: true
-            },
-            len: {
-                msg: "Tem que ter no minimo 3 caracters",
-                args: [3,30]
             }
         }
     },
@@ -31,6 +27,34 @@ const Tags = db.define('tags', {
                 args: true
             },
             len: [1,10], 
+        }
+    },
+    sector: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Filder Empty",
+                arg: true
+            },
+            len: {
+                msg: "Tem que ter no minimo 3 caracters",
+                args: [3,100]
+            }
+        }
+    },
+    client: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Filder Empty",
+                arg: true
+            },
+            len: {
+                msg: "Tem que ter no minimo 3 caracters",
+                args: [1,100]
+            }
         }
     },
     typeDoc: {
@@ -109,3 +133,5 @@ const Tags = db.define('tags', {
 
 
 Tags.sync();
+
+module.exports = Tags;

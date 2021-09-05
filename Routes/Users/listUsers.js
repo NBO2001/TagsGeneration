@@ -3,12 +3,12 @@ const router = express.Router();
 
 const Users = require('../../Model/users');
 
-router.get('/:key', (req, res, next) => {
+router.post('/', (req, res, next) => {
     
     Users.findAll({
         attributes: ['id', 'name'],
         where: {
-            name: req.params.key
+            name: req.body.name
         }
     })
     .then((data) => {

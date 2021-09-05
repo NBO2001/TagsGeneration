@@ -8,33 +8,15 @@ const Ueps = db.define('ueps',{
         allowNull: false,
         primaryKey: true,
     },
-    uep: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-            notEmpty: {
-                msg: "Filder Empty",
-                arg: true
-            },
-            len: {
-                msg: "Tem que ter no minimo 3 caracters",
-                args: [3,30]
-            }
-        }
-    },
     qntBoxs:{
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 0
     },
     uepOpen: {
         type: Sequelize.DOUBLE,
         allowNull: false,
-        validate:{
-            notEmpty: {
-                msg: "Filder empty",
-                args: true
-            }
-        }
+        defaultValue: true
     },
     openingFor:{
         type: Sequelize.STRING,
@@ -53,3 +35,5 @@ const Ueps = db.define('ueps',{
 });
 
 Ueps.sync();
+
+module.exports = Ueps;

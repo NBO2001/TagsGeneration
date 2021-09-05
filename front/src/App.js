@@ -1,10 +1,23 @@
-import React from 'react'
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import {Home, Auth} from './pages';
+import { ProvaiderAuth, PrivateRouter} from './components';
 
 const App = () => {
+   
   return (
-    <div>
-        <h1>Hey ma2</h1>
-    </div>
+    <ProvaiderAuth>
+      <Router>
+          <Switch>
+            <PrivateRouter path="/home" component={Home} />
+            <Route path="/" component={Auth} />
+          </Switch>
+      </Router>
+    </ProvaiderAuth>
   )
 }
 

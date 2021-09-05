@@ -9,16 +9,12 @@ const Boxs = db.define('boxs', {
         primaryKey: true,
     },
     uep: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
             notEmpty: {
                 msg: "Filder Empty",
                 arg: true
-            },
-            len: {
-                msg: "Tem que ter no minimo 3 caracters",
-                args: [3,30]
             }
         }
     },
@@ -36,12 +32,7 @@ const Boxs = db.define('boxs', {
     boxOpen: {
         type: Sequelize.DOUBLE,
         allowNull: false,
-        validate:{
-            notEmpty: {
-                msg: "Filder empty",
-                args: true
-            }
-        }
+        defaultValue: true
     },
     openingFor:{
         type: Sequelize.STRING,
@@ -61,3 +52,5 @@ const Boxs = db.define('boxs', {
 
 
 Boxs.sync();
+
+module.exports = Boxs;
