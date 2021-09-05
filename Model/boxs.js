@@ -35,16 +35,12 @@ const Boxs = db.define('boxs', {
         defaultValue: true
     },
     openingFor:{
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
             notEmpty: {
                 msg: "Filder Empty",
                 arg: true
-            },
-            len: {
-                msg: "Tem que ter no minimo 3 caracters",
-                args: [3,30]
             }
         }
     }

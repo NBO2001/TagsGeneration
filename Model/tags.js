@@ -116,16 +116,12 @@ const Tags = db.define('tags', {
         }
     },
     lastUpdate:{
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
             notEmpty: {
                 msg: "Filder Empty",
                 arg: true
-            },
-            len: {
-                msg: "Tem que ter no minimo 3 caracters",
-                args: [3,100]
             }
         }
     }
