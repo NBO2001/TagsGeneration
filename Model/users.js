@@ -23,3 +23,7 @@ const Users = db.define('users', {
         }
     },
 });
+
+Users.sync();
+
+module.exports = Users;

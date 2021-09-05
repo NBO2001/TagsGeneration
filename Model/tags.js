@@ -106,3 +106,6 @@ const Tags = db.define('tags', {
         }
     }
 });
+
+
+Tags.sync();

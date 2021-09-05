@@ -51,3 +51,5 @@ const Ueps = db.define('ueps',{
         }
     }
 });
+
+Ueps.sync();

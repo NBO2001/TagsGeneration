@@ -58,3 +58,6 @@ const Boxs = db.define('boxs', {
         }
     }
 })
+
+
+Boxs.sync();
