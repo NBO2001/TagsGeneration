@@ -4,7 +4,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import {Home, Auth} from './pages';
+import {Home, Auth, AddUsers} from './pages';
 import { ProvaiderAuth, PrivateRouter} from './components';
 
 const App = () => {
@@ -13,6 +13,7 @@ const App = () => {
     <ProvaiderAuth>
       <Router>
           <Switch>
+            <Route path="/adm/addUsers" component={AddUsers} exact />
             <PrivateRouter path="/home" component={Home} />
             <Route path="/" component={Auth} />
           </Switch>

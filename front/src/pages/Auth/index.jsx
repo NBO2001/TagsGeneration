@@ -13,7 +13,7 @@ const Auth = () => {
 
     const addValueUser = (e) => {
         setUser({
-            [e.target.name]: e.target.value 
+            [e.target.name]: (e.target.value ).toUpperCase() 
         })
     }
     const headers = {
