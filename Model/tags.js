@@ -25,8 +25,7 @@ const Tags = db.define('tags', {
             notEmpty: {
                 msg: "Filder empty",
                 args: true
-            },
-            len: [1,10], 
+            } 
         }
     },
     idSector: {
@@ -37,7 +36,6 @@ const Tags = db.define('tags', {
                 msg: "Filder empty",
                 args: true
             },
-            len: [1,10], 
         }
     },
     client: {

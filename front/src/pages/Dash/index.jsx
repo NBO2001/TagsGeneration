@@ -3,7 +3,7 @@ import { sectorContext } from '../../sectorContext';
 import api from '../../config';
 import { authContext } from '../../authContext';
 import { Modal }from '../../components'
-
+import FormLabel from "@material-ui/core/FormLabel";
 const Dash = () => {
 
     const { auth } = useContext(authContext);
@@ -11,6 +11,8 @@ const Dash = () => {
     const [data, setData] = useState({});
     const [ boxs, setBoxs ] = useState();
     const [modal, setModal] = useState({isOpen:false})
+    const [ doctype, setDoctype] = useState([])
+    const [configGobal, setConfigGobal] = useState({});
 
     const headers = {
         'headers': {
@@ -94,8 +96,16 @@ const Dash = () => {
         }
     }
     const openModal = (id) => {
-        console.log(id)
         setModal({...modal, isOpen: true, inClick: id})
+    }
+    const closedBox = (id) => {
+        //Criar a logica de geração de espelho aqui ?
+        api.put('/updateBox', {boxOpen: 0 ,id}, headers)
+        .then((response) => {
+            console.log(response)
+            setModal({...modal, isOpen: false})
+        })
+
     }
     const showBoxs  = () => {
         if(boxs){
@@ -110,11 +120,78 @@ const Dash = () => {
                     <button onClick={ () => openModal(onlyBox.id)}> Inserir dados</button>
                 </div>
             ))} 
-            { (buttonsNumbers > 0) && (<button onClick={addBox}> Add Box</button>) }
+            { (parseInt(data.qntBoxs) === 0) && (<button onClick={addBox}> Add Box</button>) }
             </>)
         }  
     }
-    boxs && console.log(config)
+    
+    const sendDataBack = async (e) => {
+        e.preventDefault();
+        const uep =parseInt(data.id)
+        const idBox = parseInt(modal.inClick)
+        const idSector = parseInt(config.sector)
+        const client = parseInt(config.client)
+        const keyOne = configGobal.keyOne
+        const keyTwo = configGobal.keyTwo
+        const dateStart = configGobal.dateStart
+        const  dateEnd  = configGobal.dateEnd
+        const lastUpdate = auth.id;
+        const valuesData = {
+            uep,
+            idBox,
+            idSector,
+            client,
+            keyOne,
+            keyTwo,
+            dateStart,
+            dateEnd,
+            lastUpdate
+        }
+
+        const dataSend = await doctype.map( async (doc) => {
+
+            await api.post('/addTag', {
+                ...valuesData,
+                typeDoc: doc.label
+            }, headers)
+            .then((response) => console.log(response))
+            .catch((err) => console.log(err))
+        })
+    }
+    const inputsData = (e) => {
+        let tempDataT = doctype;
+        let repts = 0;
+        const semDupli = tempDataT.map((dt) => {
+            if(dt.id === e.target.value){
+                repts = repts + 1;
+                return false;
+            }else{
+                return {
+                    id: dt.id,
+                    label: dt.label
+                }
+            }
+        })
+        if(!repts){
+            let [tempData] = doctype;
+            let tempObj = [tempData, {
+                id: e.target.value,
+                label: e.target.name
+            }]
+            let endArray = tempObj.filter(sect => sect);
+            setDoctype(endArray)    
+        }else{
+            let endArray = semDupli.filter(sect => sect);
+            setDoctype(endArray)   
+        }
+        
+    }
+    const addConfigGobal = (e) => {
+        setConfigGobal({...configGobal,
+            [e.target.name]: e.target.value  
+        })
+    }
+    
     return (
         <>
         <div>
@@ -129,20 +206,25 @@ const Dash = () => {
             
 
         </div>
-        
-        <Modal open={modal.isOpen} onClose={() => setModal({...modal, isOpen: (!modal.isOpen)})}> 
-        
-                <p>uep: {data.id}</p>
-                <p>idBox: {modal.inClick}</p>
-                <p>idSetor: {config.id}</p>
-                <p>client: {config.client} </p>
-                {config.checkList.map((check) => {
-                    return(
-                        <p key={check.id}>{check.docType}</p>
-                    )
-                })}
 
-                <p>, ,  ,  , , keyOne, keyTwo, dateStart, dateEnd</p>
+        <Modal open={modal.isOpen} onClose={() => setModal({...modal, isOpen: (!modal.isOpen)})}> 
+                <form onSubmit={sendDataBack}>
+                    {config.checkList.map((check) => {
+                        return(
+                            <label>
+                                {check.docType}
+                                <input type="checkbox" onChange={inputsData} key={check.id} value={check.id} name={check.docType}></input>
+                            </label>
+                        )
+                    })}
+
+                    <input name="keyOne" onChange={addConfigGobal} placeholder="Primeira Chave" type="text" />
+                    <input name="keyTwo" onChange={addConfigGobal} placeholder="Segunda chave" type="text" />
+                    <input name="dateStart" onChange={addConfigGobal} type="date" />
+                    <input name="dateEnd" onChange={addConfigGobal} type="date" />
+                    <button> Send </button>
+                </form>
+                <button onClick={() => closedBox(modal.inClick)}>Fechar Box</button>
         </Modal>
         </>
     )

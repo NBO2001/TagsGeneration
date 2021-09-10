@@ -11,9 +11,9 @@ router.post('/', (req, res, next) => {
             data
         })
     })
-    .catch(() => res.status(400).json({
+    .catch((err) => res.status(400).json({
         error: true,
-        msg: "Erro Initrersm"
+        msg: err
     }))
 })
 

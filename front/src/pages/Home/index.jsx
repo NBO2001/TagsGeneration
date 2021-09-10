@@ -48,12 +48,14 @@ function Home() {
                 setDatas(
                     {
                         ...datas,
+                        sector: id,
                         checkList: data.response
                     }
                 )
             }
         })
     }
+    console.log(datas)
     const addValue = (e) => {
         const sect = sectors.map((sector) => (parseInt(sector.id) === parseInt(e.target.value)) && {
             id: sector.id,

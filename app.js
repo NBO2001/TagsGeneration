@@ -1,5 +1,5 @@
 require('dotenv').config();
-const express = require('express');
+const express = require('express')
 const cors = require('cors');
 
 const app = express();
@@ -21,6 +21,7 @@ const addCheckListRouter = require('./Routes/CheckList/addItem')
 const listCheckListRouter = require('./Routes/CheckList/listItems')
 const seachUeoRouter = require('./Routes/Uep/seachUep')
 const seachBoxRouter = require('./Routes/Boxs/seachBox')
+const updateBoxRouter = require('./Routes/Boxs/updateBox')
 
 app.use('/api/addUsers', addUsersRouter)
 app.use('/api/listUsers', listUsersRouter)
@@ -36,5 +37,6 @@ app.use('/api/addItem', addCheckListRouter)
 app.use('/api/listCheck', listCheckListRouter)
 app.use('/api/seachUep', seachUeoRouter)
 app.use('/api/seachBox', seachBoxRouter)
+app.use('/api/updateBox', updateBoxRouter)
 
 app.listen(port, () => console.log(`Listening on port ${port}`))
