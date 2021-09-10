@@ -3,9 +3,12 @@ const router = express.Router();
 
 const Sectors = require('../../Model/sectors');
 
-router.get('/', (req, res, next) => {
+router.post('/', (req, res, next) => {
     Sectors.findAll({
-        attributes: ['id', 'client', 'sector']
+        attributes: ['id', 'client', 'sector'],
+        where: {
+            client: req.body.client
+        }
     })
     .then((response) => res.status(201).json({
         error: false,

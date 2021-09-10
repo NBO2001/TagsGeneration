@@ -19,6 +19,7 @@ const addSectorRouter = require('./Routes/Sectors/addSector')
 const listSectorsRouter = require('./Routes/Sectors/listSectors')
 const addCheckListRouter = require('./Routes/CheckList/addItem')
 const listCheckListRouter = require('./Routes/CheckList/listItems')
+const seachUeoRouter = require('./Routes/Uep/seachUep')
 
 app.use('/api/addUsers', addUsersRouter);
 app.use('/api/listUsers', listUsersRouter);
@@ -32,5 +33,6 @@ app.use('/api/addSector', addSectorRouter)
 app.use('/api/listSectors', listSectorsRouter)
 app.use('/api/addItem', addCheckListRouter)
 app.use('/api/listCheck', listCheckListRouter)
+app.use('/api/seachUep', seachUeoRouter)
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
