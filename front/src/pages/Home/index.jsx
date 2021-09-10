@@ -9,7 +9,7 @@ function Home() {
     const { setConfig } = useContext(sectorContext);
     const [ clients, setClients] = useState();
     const [ datas, setDatas] = useState({});
-    const [ sectors, setSectors] = useState();
+    const [ sectors, setSectors] = useState()
 
     let history = useHistory();
 
@@ -38,6 +38,22 @@ function Home() {
        }
         
     }
+    const seachCheckList = (id) => {
+        api.post('/listCheck', {
+            client: parseInt(datas.client),
+            sector: parseInt(id)
+        })
+        .then(( {data} ) => {
+            if(!data.error){
+                setDatas(
+                    {
+                        ...datas,
+                        checkList: data.response
+                    }
+                )
+            }
+        })
+    }
     const addValue = (e) => {
         const sect = sectors.map((sector) => (parseInt(sector.id) === parseInt(e.target.value)) && {
             id: sector.id,
@@ -48,6 +64,7 @@ function Home() {
             ...datas,
             ...result
         })
+        seachCheckList(result.id)
     }
     
     const redPage = () => {

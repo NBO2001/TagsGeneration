@@ -20,13 +20,14 @@ const listSectorsRouter = require('./Routes/Sectors/listSectors')
 const addCheckListRouter = require('./Routes/CheckList/addItem')
 const listCheckListRouter = require('./Routes/CheckList/listItems')
 const seachUeoRouter = require('./Routes/Uep/seachUep')
+const seachBoxRouter = require('./Routes/Boxs/seachBox')
 
-app.use('/api/addUsers', addUsersRouter);
-app.use('/api/listUsers', listUsersRouter);
-app.use('/api/addUep', addUepRouter);
-app.use('/api/addBox', addBoxRouter);
-app.use('/api/addTag', addTagRouter);
-app.use('/api/updateUep', updateUepRouter);
+app.use('/api/addUsers', addUsersRouter)
+app.use('/api/listUsers', listUsersRouter)
+app.use('/api/addUep', addUepRouter)
+app.use('/api/addBox', addBoxRouter)
+app.use('/api/addTag', addTagRouter)
+app.use('/api/updateUep', updateUepRouter)
 app.use('/api/addClient', addClientRouter)
 app.use('/api/listClients', listClientsRouter)
 app.use('/api/addSector', addSectorRouter)
@@ -34,5 +35,6 @@ app.use('/api/listSectors', listSectorsRouter)
 app.use('/api/addItem', addCheckListRouter)
 app.use('/api/listCheck', listCheckListRouter)
 app.use('/api/seachUep', seachUeoRouter)
+app.use('/api/seachBox', seachBoxRouter)
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, () => console.log(`Listening on port ${port}`))

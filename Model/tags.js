@@ -29,31 +29,24 @@ const Tags = db.define('tags', {
             len: [1,10], 
         }
     },
-    sector: {
-        type: Sequelize.STRING,
+    idSector: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        validate: {
+        validate:{
             notEmpty: {
-                msg: "Filder Empty",
-                arg: true
+                msg: "Filder empty",
+                args: true
             },
-            len: {
-                msg: "Tem que ter no minimo 3 caracters",
-                args: [3,100]
-            }
+            len: [1,10], 
         }
     },
     client: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
             notEmpty: {
                 msg: "Filder Empty",
                 arg: true
-            },
-            len: {
-                msg: "Tem que ter no minimo 3 caracters",
-                args: [1,100]
             }
         }
     },

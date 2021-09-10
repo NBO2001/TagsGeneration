@@ -29,6 +29,17 @@ const Boxs = db.define('boxs', {
             len: [1,10], 
         }
     },
+    idSector: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate:{
+            notEmpty: {
+                msg: "Filder empty",
+                args: true
+            },
+            len: [1,10], 
+        }
+    },
     boxOpen: {
         type: Sequelize.DOUBLE,
         allowNull: false,

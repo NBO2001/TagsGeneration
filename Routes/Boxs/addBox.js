@@ -1,22 +1,30 @@
 const express = require('express');
 const router = express.Router();
 
-const Boxs = require('../../Model/boxs')
+const Boxs = require('../../Model/boxs');
+const Uep = require('../../Model/uep');
 
-router.post('/', (req, res, next) => {
-    Boxs.create(req.body)
-    .then((data) => {
-        return res.status(200).json({
-            error: false,
-            data
-        })
+router.post('/', async (req, res, next) => {
+    const box = await Boxs.create(req.body);
+
+    const id = parseInt(req.body.uep)
+    const idBox =parseInt(req.body.idBox)
+    
+    const updateUep = await Uep.update({
+        qntBoxs: idBox
+    }, {
+        where: {
+            id
+        }
     })
-    .catch(() => {
-        return res.status(400).json({
-            error: true,
-            msg: "Erro inesperado"
-        })
+    res.status(200).json({
+        error: false,
+        response: {
+            box,
+            updateUep
+        }
     })
+
 })
 
 module.exports = router;

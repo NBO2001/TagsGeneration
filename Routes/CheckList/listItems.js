@@ -3,9 +3,13 @@ const router = express.Router();
 
 const CheckList = require('../../Model/checklist');
 
-router.get('/', (req, res, next) => {
+router.post('/', (req, res, next) => {
     CheckList.findAll({
-        attributes: ['id', 'client', 'sector' ,'docType']
+        attributes: ['id', 'client', 'sector' ,'docType'],
+        where: {
+            client: req.body.client,
+            sector:req.body.sector
+        }
     })
     .then((response) => res.status(201).json({
         error: false,
