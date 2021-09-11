@@ -55,7 +55,7 @@ function Home() {
             }
         })
     }
-    console.log(datas)
+    
     const addValue = (e) => {
         const sect = sectors.map((sector) => (parseInt(sector.id) === parseInt(e.target.value)) && {
             id: sector.id,
@@ -75,7 +75,10 @@ function Home() {
             history.push('/dash')
         }
     }
-   
+    
+    const insertClient = () => {
+        history.push('/adm/clients')
+    }
     return (
         <div>
             <select onChange={chnClient}>
@@ -88,7 +91,7 @@ function Home() {
                 <option value="null">----</option>
                 { sectors && sectors.map((sector) => ( <option key={sector.sector} value={sector.id}>{sector.sector}</option>))}
             </select>
-
+            <button type="button" onClick={() => insertClient()}> Add Client </button>
             <button type="button" onClick={() => redPage()}> Next </button>
         </div>
     )

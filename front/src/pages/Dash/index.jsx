@@ -3,7 +3,7 @@ import { sectorContext } from '../../sectorContext';
 import api from '../../config';
 import { authContext } from '../../authContext';
 import { Modal }from '../../components'
-import FormLabel from "@material-ui/core/FormLabel";
+
 const Dash = () => {
 
     const { auth } = useContext(authContext);
@@ -73,13 +73,15 @@ const Dash = () => {
         .catch((err) => console.log(err))
     }
     const addBox = async () => {
+        
         const { data: dataResponse } = await api.post('/addBox', {
             uep: data.id,
             idBox: (boxs.qnt+1),
-            idSector: config.id,
+            idSector: config.sector,
             openingFor:  auth.id
         });
-     
+        
+
         if(!dataResponse.error){
             const { box } = dataResponse.response;
             
@@ -102,7 +104,9 @@ const Dash = () => {
         //Criar a logica de geração de espelho aqui ?
         api.put('/updateBox', {boxOpen: 0 ,id}, headers)
         .then((response) => {
-            console.log(response)
+            setData({
+                ...data
+            })
             setModal({...modal, isOpen: false})
         })
 
@@ -120,7 +124,7 @@ const Dash = () => {
                     <button onClick={ () => openModal(onlyBox.id)}> Inserir dados</button>
                 </div>
             ))} 
-            { (parseInt(data.qntBoxs) === 0) && (<button onClick={addBox}> Add Box</button>) }
+            { (parseInt(data.qntBoxs) < 3) && (<button onClick={addBox}> Add Box</button>) }
             </>)
         }  
     }
@@ -191,15 +195,24 @@ const Dash = () => {
             [e.target.name]: e.target.value  
         })
     }
+    const closedUep = (id) => {
+        api.put('/updateUep', {
+            uepOpen: false,
+            id
+        })
+        .then((response) => setData({}))
+        .catch(() => console.log("Err"))
+    }
     
     return (
         <>
         <div>
-            {data? (
+            {data && data.id? (
                 <>
                 <h2>UEP: {data.id}</h2>
                 <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
                 {showBoxs()}
+                <button onClick={() => closedUep(data.id)}>Fechar Uep</button>
                 </>
             ): (<button type="button" onClick={addUep}> Inserir Uep</button>)}
         

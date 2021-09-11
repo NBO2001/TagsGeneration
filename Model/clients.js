@@ -11,6 +11,7 @@ const Clients = db.define('clients', {
     client: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        unique: true,
         validate: {
             notEmpty: {
                 msg: "Filder Empty",
