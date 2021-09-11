@@ -9,6 +9,8 @@ const ManagerClients = () => {
     const [ modal, setModal] = useState({openned: false})
     const [ sector, setSector] = useState({})
     const [ listSector, setListSector] = useState([])
+    const [ nameSector, setNameSector] = useState()
+
     useEffect(() => {
         api.get('/listClients', headers)
         .then(({ data }) => {
@@ -44,7 +46,7 @@ const ManagerClients = () => {
 
     }
     const sendModal = (id) => {
-        listSectors(modal.inClicked)
+        listSectors(id)
         setModal({
             ...modal,
             openned: true,
@@ -60,7 +62,11 @@ const ManagerClients = () => {
     const sendBackData = (e) => {
         e.preventDefault();
         api.post('/addSector', sector, headers)
-        .then(({data}) => console.log(data))
+        .then(({data}) => {
+            if(!data.error){
+                listSectors(data.response.client)
+            }
+        })
         .catch((err) => console.log(err))
     }
 
@@ -71,6 +77,20 @@ const ManagerClients = () => {
                 setListSector(data.response)
             }
         })
+        .catch((err) => console.log(err))
+    }
+    const addDocType = (e) => {
+        setNameSector({
+            client: modal.inClicked,
+            sector: parseInt(e.target.name),
+            docType: e.target.value,
+        })
+    }
+
+    const sendSector = (e) => {
+        e.preventDefault()
+        api.post('/addItem', nameSector, headers)
+        .then(({data}) => console.log(data))
         .catch((err) => console.log(err))
     }
 
@@ -84,10 +104,10 @@ const ManagerClients = () => {
                 <div>
                     {clientList && clientList.map((client) => {
                         return (
-                            <>
-                                <p key={client.id}>id: { client.id } client: {client.client}</p>
+                            <div key={client.id}>
+                                <p>id: { client.id } client: {client.client}</p>
                                 <button onClick={() => sendModal(client.client)}> Detalhes de setores</button>
-                            </>
+                            </div>
                         )
                     })}
                 </div>
@@ -101,7 +121,16 @@ const ManagerClients = () => {
                         <button type='submit'> Adicionar Setor</button>
                     </form>
                     {listSector && listSector.map((scs) => {
-                        return (<p>Um</p>)
+                        return (
+                            <div key={scs.id}>
+                                <p>{scs.sector}</p>
+                                <form onSubmit={sendSector}>
+                                    <input type="text" name={scs.id} onChange={addDocType} />
+                                    <button type="submit"> Adicionar Tipo de documento</button>
+                                </form>
+
+                            </div>
+                        )
                     })}                    
                 </div>
             </Modal>

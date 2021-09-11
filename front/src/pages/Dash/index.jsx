@@ -13,15 +13,16 @@ const Dash = () => {
     const [modal, setModal] = useState({isOpen:false})
     const [ doctype, setDoctype] = useState([])
     const [configGobal, setConfigGobal] = useState({});
-
+    
     const headers = {
         'headers': {
             'Content-Type': 'application/json'
         }
    }
-
+   
     useEffect(() => {
         api.post('/seachUep', {
+            client: config.client,
             openingFor: auth.id,
             uepOpen: 1
         }, headers)
@@ -52,7 +53,7 @@ const Dash = () => {
                   if(dataResp.response){
                     setBoxs({
                         boxs: dataResp.response,
-                        qnt: dataResp.response.length
+                        idBox: dataResp.lastIndex
                     })
                   }  
                 }
@@ -62,6 +63,7 @@ const Dash = () => {
     }
     const addUep = () => {
         api.post('/addUep', {
+            client: parseInt(config.client),
             openingFor: auth.id
         }, headers)
         .then(( { data }) => { 
@@ -73,10 +75,12 @@ const Dash = () => {
         .catch((err) => console.log(err))
     }
     const addBox = async () => {
-        
+        let [tempA] = boxs.idBox;
+        const idBox = (tempA && tempA.idBox)? tempA.idBox: 0;
+
         const { data: dataResponse } = await api.post('/addBox', {
             uep: data.id,
-            idBox: (boxs.qnt+1),
+            idBox: (idBox+1),
             idSector: config.sector,
             openingFor:  auth.id
         });
@@ -93,7 +97,7 @@ const Dash = () => {
             setBoxs(objTemp)
             setData({
                 ...data,
-                qntBoxs: box.idBox
+                qntBoxs: (idBox+1)
             })
         }
     }
@@ -113,18 +117,21 @@ const Dash = () => {
     }
     const showBoxs  = () => {
         if(boxs){
-
-            const buttonsNumbers = 3 - boxs.qnt
+            
+            let [idbx] = boxs.idBox? boxs.idBox: [];
+            
+            const buttonsNumbers = 3 - ((idbx && idbx.idBox)? parseInt(idbx.idBox): 0)
             
             return (<>
             {boxs && boxs.boxs.map((onlyBox) => (
                 <div key={onlyBox.id}>
                     <h2>Index da Box:  {onlyBox.idBox}</h2>
+                    {console.log(onlyBox)}
                     <h2> Setor: {onlyBox.idSector}</h2>
                     <button onClick={ () => openModal(onlyBox.id)}> Inserir dados</button>
                 </div>
             ))} 
-            { (parseInt(data.qntBoxs) < 3) && (<button onClick={addBox}> Add Box</button>) }
+            { (buttonsNumbers != 0) && (<button onClick={addBox}> Add Box</button>) }
             </>)
         }  
     }
@@ -203,13 +210,13 @@ const Dash = () => {
         .then((response) => setData({}))
         .catch(() => console.log("Err"))
     }
-    
+    console.log(data)
     return (
         <>
         <div>
             {data && data.id? (
                 <>
-                <h2>UEP: {data.id}</h2>
+                <h2>UEP: {data.idUep}</h2>
                 <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
                 {showBoxs()}
                 <button onClick={() => closedUep(data.id)}>Fechar Uep</button>

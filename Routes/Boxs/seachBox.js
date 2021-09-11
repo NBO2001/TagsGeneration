@@ -3,7 +3,16 @@ const router = express.Router()
 
 const Boxs = require('../../Model/boxs')
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
+
+    const lastIndex = await Boxs.findAll({
+        attributes:['idBox'],
+        limit: 1,
+        order: [ ['idBox', 'DESC']],
+        where: {
+            uep: req.body.uep
+        }
+    })
 
     Boxs.findAll({
         attributes: ['id', 'uep', 'idBox', 'idSector', 'boxOpen', 'openingFor'],
@@ -14,7 +23,8 @@ router.post('/', (req, res, next) => {
     })
     .then((response) => res.status(200).json({
         error: false,
-        response
+        response,
+        lastIndex
     }))
     .catch(() => res.status(400).json({
         error: true,

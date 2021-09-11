@@ -19,6 +19,14 @@ const Clients = db.define('clients', {
             }
         }
     },
+    clientName: {
+        type: Sequelize.STRING,
+        allowNull: true,
+    },
+    logoUrl: {
+        type: Sequelize.STRING,
+        allowNull: true,
+    },
 })
 
 Clients.sync()

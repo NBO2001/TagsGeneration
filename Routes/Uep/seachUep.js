@@ -4,8 +4,9 @@ const Uep = require('../../Model/uep')
 
 router.post('/', (req, res, next) => {
     Uep.findAll({
-        attributes: ['id','qntBoxs', 'uepOpen', 'openingFor'],
+        attributes: ['id','idUep','qntBoxs', 'uepOpen', 'openingFor'],
         where: {
+            client: req.body.client,
             openingFor: req.body.openingFor,
             uepOpen: req.body.uepOpen
         }

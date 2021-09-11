@@ -8,6 +8,20 @@ const Ueps = db.define('ueps',{
         allowNull: false,
         primaryKey: true,
     },
+    idUep:{
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    client: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "Filder Empty",
+                arg: true
+            }
+        }
+    },
     qntBoxs:{
         type: Sequelize.INTEGER,
         allowNull: false,
