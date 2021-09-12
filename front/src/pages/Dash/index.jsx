@@ -3,6 +3,7 @@ import { sectorContext } from '../../sectorContext';
 import api from '../../config';
 import { authContext } from '../../authContext';
 import { Modal }from '../../components'
+import { Link } from 'react-router-dom'
 
 const Dash = () => {
 
@@ -169,6 +170,7 @@ const Dash = () => {
             .catch((err) => console.log(err))
         })
     }
+    
     const inputsData = (e) => {
         let tempDataT = doctype;
         let repts = 0;
@@ -244,6 +246,10 @@ const Dash = () => {
                     <input name="dateEnd" onChange={addConfigGobal} type="date" />
                     <button> Send </button>
                 </form>
+                <button onClick={() => setModal({...modal, isOpen: (!modal.isOpen)})}>Sair sem finalizar</button>
+                <Link to={`/generator/box=${modal.inClick}`} target="_blank"  >
+                Gerar tag
+                </Link>
                 <button onClick={() => closedBox(modal.inClick)}>Fechar Box</button>
         </Modal>
         </>

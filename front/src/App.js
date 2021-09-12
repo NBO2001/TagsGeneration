@@ -4,7 +4,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import {Home, Auth, AddUsers, Dash, ManagerClients} from './pages';
+import {Home, Auth, AddUsers, Dash, ManagerClients, LabelGenerator} from './pages';
 import { ProvaiderAuth, PrivateRouter, ProvaiderConfig} from './components';
 
 const App = () => {
@@ -16,10 +16,12 @@ const App = () => {
             <Route path="/adm/addUsers" component={AddUsers} exact />
             <Route path="/" component={Auth} exact/>
             <PrivateRouter path="/adm/clients" component={ManagerClients} exact />
+            <Route path="/generator/:seach" component={LabelGenerator} exact/>
             <ProvaiderConfig>
               <PrivateRouter path="/home" component={Home} />
               <PrivateRouter path="/dash" component={Dash} />
             </ProvaiderConfig>
+            
           </Switch>
       </Router>
     </ProvaiderAuth>
