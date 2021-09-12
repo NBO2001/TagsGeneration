@@ -16,7 +16,7 @@ router.get('/:idBox', async (req, res, next) => {
         }
     })
     const firstDate = await Tags.findAll({
-        attributes:['client','idSector','idBox','uep','dateStart'],
+        attributes:['idBox','dateStart'],
         limit: 1,
         order: [ ['dateEnd', 'ASC']],
         where: {

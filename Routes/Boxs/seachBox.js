@@ -3,6 +3,26 @@ const router = express.Router()
 
 const Boxs = require('../../Model/boxs')
 
+router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    Boxs.findAll({
+        attributes: ['id','uep', 'idBox', 'idSector'],
+        where: {
+            id
+        }
+    })
+    .then((response) => {
+        res.status(200).json({
+            error: false,
+            response
+        })
+    })
+    .catch(( err) => res.status(500).json({
+        error: true,
+        msg: "Erro interno"
+    }))
+})
+
 router.post('/', async (req, res, next) => {
 
     const lastIndex = await Boxs.findAll({
