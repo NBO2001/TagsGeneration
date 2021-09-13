@@ -99,11 +99,11 @@ const LabelGenerator = () => {
     return (
         <TagBody>
           {boxs && boxs.map((box) => {
-              console.log(box)
+              
                 return(
                     <Tag key={box.idBox}>
                         <HeardTag>
-                            <LogoTag src="https://www.accion.org/static/accion-logo.png" alt="accion" />
+                            <LogoTag src={configClient.logoUrl} alt={configClient.clientName} />
                             <BoxNumber>
                                 <p>{`${maskUep('XXXXX',configClient.uep)}.${box.idBox}`}</p>
                             </BoxNumber>

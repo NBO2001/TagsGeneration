@@ -34,7 +34,7 @@ const ManagerClients = () => {
                 setClientList(data.response)
             }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => notify('Error', 'Ocorreu um erro inesperado'))
     },[])
     const headers = {
         'headers': {
@@ -43,22 +43,24 @@ const ManagerClients = () => {
    }
 
     const addInformations = (e) => {
-        setDataForBack({
+        setDataForBack({...dataForBack,
             [e.target.name]: e.target.value
         })
     }
     const sendDataBack = (e) => {
         e.preventDefault();
+        console.log(dataForBack)
         api.post('/addClient', dataForBack, headers)
         .then(({data}) => {
             if(!data.error){
                 let dt = data.response
                 setClientList([ ...clientList,
-                    dt])
+                dt])
+                notify('Success', 'Cliente Adicionado')
 
             }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => notify('Error', 'Cliente Não Adicionado'))
 
     }
     const sendModal = (id) => {
