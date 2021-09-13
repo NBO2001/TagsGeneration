@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../config'
-import { LogoTag, Tag, HeardTag } from '../../components'
+import { LogoTag, Tag, HeardTag, LineSector, FooterTag, 
+    TagBody,TypeDoc, DocsDiv, BoxNumber } from '../../components'
+import formatDate from '../../utils/format/formatDate'
 
 const LabelGenerator = () => {
 
@@ -12,92 +14,113 @@ const LabelGenerator = () => {
     
     const valueSeach = seach.split('=')
 
-    const exeSeach = async () => {
-
-        if(valueSeach[0] === 'box'){
-
-            const { data } = await api.get(`/tags/${valueSeach[1]}`)
+    const seachBoxs = async (response) => {
+        var arrayEnd = []
+        var stConfig;
+        
+        response.map(async (res) => {
             
-            if(!data.error){
-                let  resp  = data.response
-                let box = {};
-                let typeDocs = []
-                
-                resp.map((res) => {
-                    typeDocs.push(res.typeDoc)
-                    return true;
-                })
-                
-                let [ aTem ] = data.firstDate;
-                
-                let [ dtStart ] = data.lastDate;
+            let box = {};
 
-                const dateStart = dtStart.dateStart;
+            const { data } = await api.get(`/tags/${res.id}`)
 
-                const dateEnd = aTem.dateStart;
-                
+        if(!data.error){
+            let  resp  = data.response
+            
+            let typeDocs = []
+            
+            resp.map((res) => {
+                typeDocs.push(res.typeDoc)
+                return true;
+            })
+            
+            let [ aTem ] = data.firstDate? data.firstDate: [];
+            
+            let [ dtStart ] = data.lastDate;
+
+            const dateEnd = (dtStart && dtStart.dateStart)? dtStart.dateStart: [];
+
+            const dateStart  = (aTem && aTem.dateStart)? aTem.dateStart: null;
+            
+            if(dateStart){
                 const { data:dataRes } = await api.get(`/seachBox/${aTem.idBox}`)
-                box = {...box, typeDocs, dateStart, dateEnd}
-                if(!dataRes.error){
+            box = {...box, typeDocs, dateStart, dateEnd}
+            if(!dataRes.error){
 
-                    let [ a2Tem ] = dataRes.response;
+                let [ a2Tem ] = dataRes.response;
 
-                    box = {...box, idBox: a2Tem.idBox}
-                    
-                    let configGob = {
-                        uep: a2Tem.uep
-                    }
-                    
-                    const { data:dataSector } = await api.get(`/listSectors/${a2Tem.idSector}`)
-        
-                    const clientResponse = dataSector.response;
-        
-                    box = {...box, sector: clientResponse.sector}
-                   
-                    setConfigClient({...configClient, ...configGob,
-                        clientName: clientResponse.clientName,
-                        logoUrl: clientResponse.logoUrl 
-                    })
-                    setBoxs([...boxs,box])
-
+                box = {...box, idBox: a2Tem.idBox}
+                
+                let configGob = {
+                    uep: a2Tem.uep
                 }
+                
+                const { data:dataSector } = await api.get(`/listSectors/${a2Tem.idSector}`)
+    
+                const clientResponse = dataSector.response;
+    
+                box = {...box, sector: clientResponse.sector}
+
+                let tempAr = boxs;
+                tempAr.push(box)
+                setBoxs(tempAr)
+                setConfigClient({...configClient, ...configGob,
+                    clientName: clientResponse.clientName,
+                    logoUrl: clientResponse.logoUrl 
+                })                
             }
+            }
+            
+        }})
+        console.log(boxs)
+    }
+
+    const seachUep = async (id) => {
+        
+        const { data } = await api.get(`/getueps/${id}`)
+
+        if(!data.error){
+            const response = data.response;
+            
+            seachBoxs(response)
+
         }
     }
-    console.log(boxs)
+
     useEffect(() => {
-        exeSeach()
+        if(valueSeach[0] === 'box'){
+            seachBoxs([{id: valueSeach[1]}])
+        }
+        else{
+            seachUep(valueSeach[1])
+        }
     },[])
     return (
-        <>
+        <TagBody>
           {boxs && boxs.map((box) => {
-              console.log(box.idBox)
                 return(
                     <Tag key={box.idBox}>
                         <HeardTag>
                             <LogoTag src="https://www.accion.org/static/accion-logo.png" alt="accion" />
-                            <div>
-                                <p>BOX 454</p>
-                            </div>
+                            <BoxNumber>
+                                <p>{`${configClient.uep}.${box.idBox}`}</p>
+                            </BoxNumber>
                         </HeardTag>
-                        <div>
-                            <label>Setor</label>
-                            <p>{box.sector}</p>
-                        </div>
-                        <div>
-                            {box.typeDocs.map((doc) => {
-                                return(<p key={doc}> {doc} </p>)
+                        
+                        <LineSector sector={box.sector} /> 
+                        <DocsDiv>
+                            {box.typeDocs && box.typeDocs.map((doc) => {
+                                return(<TypeDoc key={doc}> {doc} </TypeDoc>)
                             })}
-                        </div>
+                        </DocsDiv>
         
-                        <div>
-                            <p>Periodo</p>
-                            <p>{box.dateStart} - {box.dateEnd}</p>
-                        </div>
+                        <FooterTag>
+                            {formatDate(box.dateStart)} - {formatDate(box.dateEnd)}
+                        </FooterTag>
                     </Tag>
                 )
             })}
-        </>
+        </TagBody>
     )
 }
 

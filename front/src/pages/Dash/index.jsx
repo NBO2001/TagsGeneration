@@ -2,7 +2,7 @@ import React, { useEffect,useContext, useState} from 'react'
 import { sectorContext } from '../../sectorContext';
 import api from '../../config';
 import { authContext } from '../../authContext';
-import { Modal }from '../../components'
+import { Modal, PageBody }from '../../components'
 import { Link } from 'react-router-dom'
 
 const Dash = () => {
@@ -43,9 +43,9 @@ const Dash = () => {
     },[data])
 
     const seachBox = () => {
-        if(data && data.id){
+        if(data && data.idUep){
             api.post('/seachBox',{
-                uep: data.id,
+                uep: data.idUep,
                 boxOpen: 1
             }, headers)
             .then(({data: dataResp}) => {
@@ -75,17 +75,17 @@ const Dash = () => {
         })
         .catch((err) => console.log(err))
     }
+    
     const addBox = async () => {
         let [tempA] = boxs.idBox;
         const idBox = (tempA && tempA.idBox)? tempA.idBox: 0;
 
         const { data: dataResponse } = await api.post('/addBox', {
-            uep: data.id,
+            uep: data.idUep,
             idBox: (idBox+1),
             idSector: config.sector,
             openingFor:  auth.id
         });
-        
 
         if(!dataResponse.error){
             const { box } = dataResponse.response;
@@ -116,11 +116,12 @@ const Dash = () => {
         })
 
     }
+  
     const showBoxs  = () => {
         if(boxs){
             
             let [idbx] = boxs.idBox? boxs.idBox: [];
-            
+            console.log(idbx)
             const buttonsNumbers = 3 - ((idbx && idbx.idBox)? parseInt(idbx.idBox): 0)
             
             return (<>
@@ -212,22 +213,26 @@ const Dash = () => {
         .then((response) => setData({}))
         .catch(() => console.log("Err"))
     }
-    console.log(data)
+
+    const openTags = (uep) => {
+        window.open(`/generator/uep=${uep}`, '_blank');
+    }
     return (
         <>
-        <div>
+        <PageBody>
             {data && data.id? (
                 <>
                 <h2>UEP: {data.idUep}</h2>
                 <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
                 {showBoxs()}
+                <button onClick={() => openTags(data.idUep)}> GerarTags </button>
                 <button onClick={() => closedUep(data.id)}>Fechar Uep</button>
                 </>
             ): (<button type="button" onClick={addUep}> Inserir Uep</button>)}
         
             
 
-        </div>
+        </PageBody>
 
         <Modal open={modal.isOpen} onClose={() => setModal({...modal, isOpen: (!modal.isOpen)})}> 
                 <form onSubmit={sendDataBack}>
@@ -250,6 +255,7 @@ const Dash = () => {
                 <Link to={`/generator/box=${modal.inClick}`} target="_blank"  >
                 Gerar tag
                 </Link>
+               
                 <button onClick={() => closedBox(modal.inClick)}>Fechar Box</button>
         </Modal>
         </>

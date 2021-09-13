@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react'
 import api from '../../config';
 import { useHistory } from "react-router-dom";
 import {authContext} from '../../authContext';
+import { PageBody, FormBack, FormLogin, Inputs, Buttons } from '../../components'
 
 const Auth = () => {
 
@@ -38,12 +39,14 @@ const Auth = () => {
         
     }
     return (
-        <div>
-            <form onSubmit={sendBack}>
-                <input type="text" name="name" onChange={addValueUser}/>
-                <button type="submit"> Entrar</button>
-            </form>
-        </div>
+        <PageBody>
+            <FormBack>
+                <FormLogin onSubmit={sendBack}>
+                    <Inputs type="text" name="name" required placeholder="Digite seu usuario" onChange={addValueUser}/>
+                    <Buttons type="submit"> Entrar</Buttons>
+                </FormLogin>
+            </FormBack>
+        </PageBody>
     )
 }
 

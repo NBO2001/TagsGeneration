@@ -1,8 +1,8 @@
 import React from 'react'
 import {TagStruc} from './style'
-const Tag = ({children}) => {
+const Tag = ({children, ...rest}) => {
     return (
-        <TagStruc>
+        <TagStruc {...rest}>
             {children}
         </TagStruc>
     )

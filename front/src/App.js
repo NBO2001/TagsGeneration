@@ -6,11 +6,13 @@ import {
 } from "react-router-dom";
 import {Home, Auth, AddUsers, Dash, ManagerClients, LabelGenerator} from './pages';
 import { ProvaiderAuth, PrivateRouter, ProvaiderConfig} from './components';
+import { Reset } from 'styled-reset'
 
 const App = () => {
    
   return (
     <ProvaiderAuth>
+      <Reset />
       <Router>
           <Switch>
             <Route path="/adm/addUsers" component={AddUsers} exact />

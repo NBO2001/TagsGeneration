@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../../config'
-import { Modal }from '../../../components'
+import { Modal, PageBody }from '../../../components'
 
 const ManagerClients = () => {
     
@@ -96,22 +96,24 @@ const ManagerClients = () => {
 
     return (
         <>  
-            <div>
-                <form onSubmit={sendDataBack}>
-                    <input type="number" name="client" placeholder='Nº Cliente' min="1" onChange={addInformations} />
-                    <button type="submit"> Adicionar Cliente</button>
-                </form>
+            <PageBody>
                 <div>
-                    {clientList && clientList.map((client) => {
-                        return (
-                            <div key={client.id}>
-                                <p>id: { client.id } client: {client.client}</p>
-                                <button onClick={() => sendModal(client.client)}> Detalhes de setores</button>
-                            </div>
-                        )
-                    })}
+                    <form onSubmit={sendDataBack}>
+                        <input type="number" name="client" placeholder='Nº Cliente' min="1" onChange={addInformations} />
+                        <button type="submit"> Adicionar Cliente</button>
+                    </form>
+                    <div>
+                        {clientList && clientList.map((client) => {
+                            return (
+                                <div key={client.id}>
+                                    <p>id: { client.id } client: {client.client}</p>
+                                    <button onClick={() => sendModal(client.client)}> Detalhes de setores</button>
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
-            </div>
+            </PageBody>
 
             <Modal open={modal.openned} onClose={() => setModal({...modal, openned: (!modal.openned) })}>
                 <div>

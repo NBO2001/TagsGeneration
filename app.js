@@ -14,8 +14,6 @@ const addUepRouter = require('./Routes/Uep/addUep');
 const updateUepRouter = require('./Routes/Uep/updateUep');
 const seachUeoRouter = require('./Routes/Uep/seachUep')
 
-const addBoxRouter = require('./Routes/Boxs/addBox');
-
 const addTagRouter = require('./Routes/Tag/addTag')
 
 const addClientRouter = require('./Routes/Clients/addClient');
@@ -29,6 +27,8 @@ const listCheckListRouter = require('./Routes/CheckList/listItems')
 
 const seachBoxRouter = require('./Routes/Boxs/seachBox')
 const updateBoxRouter = require('./Routes/Boxs/updateBox')
+const addBoxRouter = require('./Routes/Boxs/addBox');
+const getUeps = require('./Routes/Boxs/getAllBoxs');
 
 app.use('/api/addUsers', addUsersRouter)
 app.use('/api/listUsers', listUsersRouter)
@@ -48,5 +48,7 @@ app.use('/api/listCheck', listCheckListRouter)
 app.use('/api/seachUep', seachUeoRouter)
 app.use('/api/seachBox', seachBoxRouter)
 app.use('/api/updateBox', updateBoxRouter)
+
+app.use('/api/getueps', getUeps)
 
 app.listen(port, () => console.log(`Listening on port ${port}`))

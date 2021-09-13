@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react'
 import { useHistory } from "react-router-dom";
 import api from '../../../config';
+import { PageBody } from  '../../../components'
 
 const AddUsers = () => {
     const [ name, setName ] = useState({});
@@ -26,12 +27,12 @@ const AddUsers = () => {
         });
     }
     return (
-        <div>
+        <PageBody>
             <form onSubmit={sendBack}>
                 <input type="text" name="name" onChange={addName} />
                 <button type="submit"> Add user </button>
             </form>
-        </div>
+        </PageBody>
     )
 }
 

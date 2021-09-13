@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { useHistory  } from "react-router-dom"
 import { authContext } from '../../authContext';
 import { sectorContext } from '../../sectorContext';
+import { PageBody } from '../../components'
 import api from '../../config';
 function Home() {
 
@@ -80,7 +81,7 @@ function Home() {
         history.push('/adm/clients')
     }
     return (
-        <div>
+        <PageBody>
             <select onChange={chnClient}>
                 <option> --- </option>
                 { clients && clients.map((clien) => (<option value={clien.client} key={clien.client}>{clien.client}</option>))}
@@ -93,7 +94,7 @@ function Home() {
             </select>
             <button type="button" onClick={() => insertClient()}> Add Client </button>
             <button type="button" onClick={() => redPage()}> Next </button>
-        </div>
+        </PageBody>
     )
 }
 
