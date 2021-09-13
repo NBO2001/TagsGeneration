@@ -11,6 +11,6 @@ export const BackForm = styled.div`
     align-items: center;
     justify-content: space-between;
     @media screen and (max-width:922px) {
-          width: 96vw;
+          width: 96%;
      }
 `

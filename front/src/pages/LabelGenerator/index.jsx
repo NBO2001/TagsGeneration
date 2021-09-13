@@ -24,7 +24,7 @@ const LabelGenerator = () => {
             let box = {};
 
             const { data } = await api.get(`/tags/${res.id}`)
-
+            
         if(!data.error){
             let  resp  = data.response
             
@@ -34,24 +34,24 @@ const LabelGenerator = () => {
                 typeDocs.push(res.typeDoc)
                 return true;
             })
-            
-            let [ aTem ] = data.firstDate? data.firstDate: [];
-            
-            let [ dtStart ] = data.lastDate;
+            let [ aTem ] = data.lastDate? data.lastDate: [];
+            let [ dtStart ] = data.firstDate;
 
-            const dateEnd = (dtStart && dtStart.dateStart)? dtStart.dateStart: [];
-
-            const dateStart  = (aTem && aTem.dateStart)? aTem.dateStart: null;
+            const dateStart = (dtStart && dtStart.dateStart)? dtStart.dateStart: [];
+            
+            const dateEnd  = (aTem && aTem.dateEnd)? aTem.dateEnd: [];
             
             if(dateStart){
+                
                 const { data:dataRes } = await api.get(`/seachBox/${aTem.idBox}`)
+             
             box = {...box, typeDocs, dateStart, dateEnd}
             if(!dataRes.error){
-
-                let [ a2Tem ] = dataRes.response;
+                
+                let  a2Tem  = dataRes.response;
 
                 box = {...box, idBox: a2Tem.idBox}
-                
+               
                 let configGob = {
                     uep: a2Tem.uep
                 }
@@ -73,7 +73,6 @@ const LabelGenerator = () => {
             }
             
         }})
-        console.log(boxs)
     }
 
     const seachUep = async (id) => {
@@ -96,9 +95,11 @@ const LabelGenerator = () => {
             seachUep(valueSeach[1])
         }
     },[])
+    console.log(configClient)
     return (
         <TagBody>
           {boxs && boxs.map((box) => {
+              console.log(box)
                 return(
                     <Tag key={box.idBox}>
                         <HeardTag>

@@ -54,7 +54,9 @@ const Auth = () => {
     }
     return (
         <PageBody>
+            
             <FormBack>
+                <div></div>
                 <FormLogin onSubmit={sendBack}>
                      <ToastContainer />
                     <Inputs type="text" name="name" placeholder="Digite seu usuario" onChange={addValueUser}/>

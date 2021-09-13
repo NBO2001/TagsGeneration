@@ -1,11 +1,14 @@
 import React, { useEffect,useContext, useState} from 'react'
 import { sectorContext } from '../../sectorContext';
 import api from '../../config';
-import { authContext } from '../../authContext';
-import { Modal, PageBody }from '../../components'
-import { Link } from 'react-router-dom'
+import { Modal, PageBody, FormBack, Selects, FormLogin, Buttons, Inputs,
+     DivConnteiner, ConnteinerDocs }from '../../components'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import maskUep from '../../utils/format/maskUep';
+import { Redirect  } from "react-router-dom";
 
-const Dash = () => {
+const Dash = ({location, ...rest}) => {
 
     const userId = localStorage.getItem('auth/id')
     const { config } = useContext(sectorContext);
@@ -14,21 +17,35 @@ const Dash = () => {
     const [modal, setModal] = useState({isOpen:false})
     const [ doctype, setDoctype] = useState([])
     const [configGobal, setConfigGobal] = useState({});
+    const [listDocs, setListDocs ] = useState([])
     
     const headers = {
         'headers': {
             'Content-Type': 'application/json'
         }
    }
-   
+
+   const notify = (tost,msg) => {
+        switch(tost){
+            case "Error":
+                return toast.error(msg);
+            case "Warn":
+                return toast.warn(msg);
+            case "Success":
+                return toast.success(msg);
+                
+            default:
+                return toast(msg);
+        }
+   };
     useEffect(() => {
-        api.post('/seachUep', {
+        config && api.post('/seachUep', {
             client: config.client,
             openingFor: userId,
             uepOpen: 1
         }, headers)
         .then(( { data }) => {
-            
+           
             if(!data.error && data.response.length){
                 const [dtResp] = data.response;
                 setData(dtResp)
@@ -41,11 +58,11 @@ const Dash = () => {
     useEffect(() => {
         seachBox()
     },[data])
-
+    
     const seachBox = () => {
         if(data && data.idUep){
             api.post('/seachBox',{
-                uep: data.idUep,
+                uep: data.id,
                 boxOpen: 1
             }, headers)
             .then(({data: dataResp}) => {
@@ -81,8 +98,7 @@ const Dash = () => {
         const idBox = (tempA && tempA.idBox)? tempA.idBox: 0;
 
         const { data: dataResponse } = await api.post('/addBox', {
-            uep: data.idUep,
-            idBox: (idBox+1),
+            uep: data.id,
             idSector: config.sector,
             openingFor:  userId
         });
@@ -102,7 +118,17 @@ const Dash = () => {
             })
         }
     }
+    const  searchDocs = async (id) => {
+        
+        const { data:respData } = await api.get(`/tags/everytag/${id}`)
+
+        if(!respData.error){
+            setListDocs(respData.response)
+        }
+        
+    }
     const openModal = (id) => {
+        searchDocs(id)
         setModal({...modal, isOpen: true, inClick: id})
     }
     const closedBox = (id) => {
@@ -112,27 +138,42 @@ const Dash = () => {
             setData({
                 ...data
             })
+            notify('Success',"Box Fechada com sucesso")
+            // openTags(`box=${id}`)
             setModal({...modal, isOpen: false})
         })
 
     }
   
     const showBoxs  = () => {
+
         if(boxs){
             
             let [idbx] = boxs.idBox? boxs.idBox: [];
-            console.log(idbx)
+            
             const buttonsNumbers = 3 - ((idbx && idbx.idBox)? parseInt(idbx.idBox): 0)
             
             return (<>
-            {boxs && boxs.boxs.map((onlyBox) => (
-                <div key={onlyBox.id}>
-                    <h2>Index da Box:  {onlyBox.idBox}</h2>
-                    {console.log(onlyBox)}
-                    <h2> Setor: {onlyBox.idSector}</h2>
-                    <button onClick={ () => openModal(onlyBox.id)}> Inserir dados</button>
-                </div>
-            ))} 
+            {boxs && boxs.boxs.map((onlyBox) => {
+                
+                if(onlyBox){
+                    if(onlyBox.idSector === config.sector){
+                        return (
+                            <div key={onlyBox.id}>
+                                <h2>Index da Box:  {onlyBox.idBox}</h2>
+                                <h2> Setor: {onlyBox.idSector}</h2>
+                                <button onClick={ () => openModal(onlyBox.id)}> Inserir dados</button>
+                            </div>
+                        )
+                    }else{
+                        return (
+                            <div key={onlyBox.id}>
+                                <h2>Index da Box:  {onlyBox.idBox}</h2>
+                                <h2> Setor: {onlyBox.idSector}</h2>
+                            </div>
+                        )
+                    }
+                } })} 
             { (buttonsNumbers != 0) && (<button onClick={addBox}> Add Box</button>) }
             </>)
         }  
@@ -140,6 +181,7 @@ const Dash = () => {
     
     const sendDataBack = async (e) => {
         e.preventDefault();
+        
         const uep =parseInt(data.id)
         const idBox = parseInt(modal.inClick)
         const idSector = parseInt(config.sector)
@@ -160,46 +202,32 @@ const Dash = () => {
             dateEnd,
             lastUpdate
         }
-
-        const dataSend = await doctype.map( async (doc) => {
+        
+        await doctype.map( async (doc) => {
 
             await api.post('/addTag', {
                 ...valuesData,
                 typeDoc: doc.label
             }, headers)
-            .then((response) => console.log(response))
-            .catch((err) => console.log(err))
+            .then(({data}) => { 
+                
+                if(!data.error){
+                    searchDocs(idBox)
+                    notify('Success', "Documento adicionado com sucesso")
+                }else{
+                    notify('Error', "Documento não adicionado")
+                }
+        })
+            .catch((err) => {
+                notify('Error', "Documento não adicionado")
+            })
         })
     }
-    
     const inputsData = (e) => {
-        let tempDataT = doctype;
-        let repts = 0;
-        const semDupli = tempDataT.map((dt) => {
-            if(dt.id === e.target.value){
-                repts = repts + 1;
-                return false;
-            }else{
-                return {
-                    id: dt.id,
-                    label: dt.label
-                }
-            }
-        })
-        if(!repts){
-            let [tempData] = doctype;
-            let tempObj = [tempData, {
-                id: e.target.value,
-                label: e.target.name
-            }]
-            let endArray = tempObj.filter(sect => sect);
-            setDoctype(endArray)    
-        }else{
-            let endArray = semDupli.filter(sect => sect);
-            setDoctype(endArray)   
-        }
+        setDoctype(e) 
         
     }
+
     const addConfigGobal = (e) => {
         setConfigGobal({...configGobal,
             [e.target.name]: e.target.value  
@@ -210,53 +238,85 @@ const Dash = () => {
             uepOpen: false,
             id
         })
-        .then((response) => setData({}))
+        .then((response) => {
+            setData({})
+            notify('Success', 'Uep Fechada com sucesso')
+            openTags(`uep=${data.id}`)
+
+        })
         .catch(() => console.log("Err"))
     }
 
     const openTags = (uep) => {
-        window.open(`/generator/uep=${uep}`, '_blank');
+        window.open(`/generator/${uep}`, '_blank');
     }
+    if(!config){
+        return(
+           <Redirect
+                   to={{
+                     pathname: "/home",
+                     state: { from: location }
+                   }}
+                 />
+         )
+      }
+    let typeDoc = [];
     return (
         <>
+          <ToastContainer />
         <PageBody>
-            {data && data.id? (
-                <>
-                <h2>UEP: {data.idUep}</h2>
-                <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
-                {showBoxs()}
-                <button onClick={() => openTags(data.idUep)}> GerarTags </button>
-                <button onClick={() => closedUep(data.id)}>Fechar Uep</button>
-                </>
-            ): (<button type="button" onClick={addUep}> Inserir Uep</button>)}
-        
-            
+            <FormBack>
+                {data && data.id? (
+                    <>
+                    <h2>UEP: {maskUep('XXXXX',data.idUep)}</h2>
+                    <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
+                    {showBoxs()}
+                    <button onClick={() => openTags(`uep=${data.id}`)}> GerarTags </button>
+                    <button onClick={() => closedUep(data.id)}>Fechar Uep</button>
+                    </>
+                ): (<ConnteinerDocs><Buttons width="90%" type="button" onClick={addUep}> Inserir Uep</Buttons></ConnteinerDocs>)}
+            </FormBack>
 
         </PageBody>
 
-        <Modal open={modal.isOpen} onClose={() => setModal({...modal, isOpen: (!modal.isOpen)})}> 
-                <form onSubmit={sendDataBack}>
-                    {config? config.checkList.map((check) => {
-                        return(
-                            <label>
-                                {check.docType}
-                                <input type="checkbox" onChange={inputsData} key={check.id} value={check.id} name={check.docType}></input>
-                            </label>
-                        )
-                    }): (<p>Error</p>)}
+        <Modal minwidth="90vw" open={modal.isOpen} onClose={() => setModal({...modal, isOpen: (!modal.isOpen)})}> 
+            <DivConnteiner>
 
-                    <input name="keyOne" onChange={addConfigGobal} placeholder="Primeira Chave" type="text" />
-                    <input name="keyTwo" onChange={addConfigGobal} placeholder="Segunda chave" type="text" />
-                    <input name="dateStart" onChange={addConfigGobal} type="date" />
-                    <input name="dateEnd" onChange={addConfigGobal} type="date" />
-                    <button> Send </button>
-                </form>
-                <button onClick={() => setModal({...modal, isOpen: (!modal.isOpen)})}>Sair sem finalizar</button>
-                <Link to={`/generator/box=${modal.inClick}`} target="_blank"  >
-                Gerar tag
-                </Link>
+                <FormLogin width="50%" height="200px" onSubmit={sendDataBack}>
+                    <Selects width="100%" isMulti onChange={inputsData} options={config && config.checkList ? config.checkList.map((check) => {
+                    typeDoc.push({
+                        value: `${check.id}`,
+                        label: `${check.docType}`
+                    })
+                    return typeDoc
+                    }): []} />
+                    
+
+                    <div>
+                        <Inputs height="40px" width="47%" name="keyOne" onChange={addConfigGobal} placeholder="Primeira Chave" type="text" />
+                        <Inputs height="40px" width="47%" name="keyTwo" onChange={addConfigGobal} placeholder="Segunda chave" type="text" />
+                    </div>
+                    <div>
+                        <Inputs height="40px" width="47%" name="dateStart" onChange={addConfigGobal} type="date" />
+                        <Inputs height="40px" width="47%" name="dateEnd" onChange={addConfigGobal} type="date" />
+                    </div>
+                    <Buttons type="submit"> Enviar </Buttons>
+                    <Buttons type="button" onClick={() => setModal({...modal, isOpen: (!modal.isOpen)})}>Sair sem finalizar</Buttons>
+                
+                    <Buttons type="button" onClick={() => closedBox(modal.inClick)}>Fechar Box</Buttons>
+                </FormLogin>
+
+                <FormBack>
+                    <ConnteinerDocs>
+                    { listDocs && listDocs.map((listDoc) => {
+                        return(<p key={listDoc.id}>{listDoc.typeDoc} - {listDoc.keyOne} - {listDoc.keyTwo} </p>)
+                    })}
+                    </ConnteinerDocs>
+                    
+                </FormBack>
+
+            </DivConnteiner>
                
-                <button onClick={() => closedBox(modal.inClick)}>Fechar Box</button>
         </Modal>
         </>
     )

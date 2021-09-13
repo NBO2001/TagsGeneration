@@ -5,23 +5,38 @@ const Boxs = require('../../Model/boxs');
 const Ueps = require('../../Model/uep');
 
 router.get('/:id', async (req, res, next) => {
-    const { id } = req.params;
-    Boxs.findAll({
-        attributes: ['id','uep', 'idBox', 'idSector'],
-        where: {
-            id
-        }
-    })
-    .then((response) => {
+    try{
+        const { id } = req.params;
+    
+        const dataResp = await Boxs.findAll({
+            attributes: ['id','uep', 'idBox', 'idSector'],
+            where: {
+                id
+            }
+        })
+
+        const [ resp ] = dataResp;
+        const vals = resp.dataValues;
+        const  [dataUep]  = await Ueps.findAll({
+            attributes: ['idUep'],
+            where: {
+                id: vals.uep 
+            }
+        })
+        const dtVal = dataUep.dataValues;
+        
+        const response = {...vals, uep: dtVal.idUep}
         res.status(200).json({
             error: false,
             response
         })
-    })
-    .catch(( err) => res.status(500).json({
-        error: true,
-        msg: "Erro interno"
-    }))
+    }catch(err){
+        res.status(500).json({
+            error: true,
+            msg: "Error"
+        })
+    }
+    
 })
 router.get('/sector/:idSector', async (req, res, next) => {
     
@@ -60,7 +75,7 @@ router.post('/', async (req, res, next) => {
             uep: req.body.uep
         }
     })
-
+    
     Boxs.findAll({
         attributes: ['id', 'uep', 'idBox', 'idSector', 'boxOpen', 'openingFor'],
         where: {

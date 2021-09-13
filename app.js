@@ -8,7 +8,7 @@ app.use(cors());
 const port = process.env.PORT || 5000;
 
 const addUsersRouter = require('./Routes/Users/addUsers');
-const listUsersRouter = require('./Routes/Users/listUsers');
+const listUsersRouter = require('./Routes/Users/listUsers')
 
 const addUepRouter = require('./Routes/Uep/addUep');
 const updateUepRouter = require('./Routes/Uep/updateUep');
@@ -28,7 +28,7 @@ const listCheckListRouter = require('./Routes/CheckList/listItems')
 const seachBoxRouter = require('./Routes/Boxs/seachBox')
 const updateBoxRouter = require('./Routes/Boxs/updateBox')
 const addBoxRouter = require('./Routes/Boxs/addBox');
-const getUeps = require('./Routes/Boxs/getAllBoxs');
+const getUeps = require('./Routes/Boxs/getAllBoxs')
 
 app.use('/api/addUsers', addUsersRouter)
 app.use('/api/listUsers', listUsersRouter)

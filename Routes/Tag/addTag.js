@@ -7,7 +7,7 @@ router.get('/:idBox', async (req, res, next) => {
 
     const { idBox } = req.params;
     
-    const lastDate = await Tags.findAll({
+    const firstDate = await Tags.findAll({
         attributes:['dateStart'],
         limit: 1,
         order: [ ['dateStart', 'DESC']],
@@ -15,8 +15,8 @@ router.get('/:idBox', async (req, res, next) => {
             idBox
         }
     })
-    const firstDate = await Tags.findAll({
-        attributes:['idBox','dateStart'],
+    const lastDate = await Tags.findAll({
+        attributes:['idBox','dateEnd'],
         limit: 1,
         order: [ ['dateEnd', 'ASC']],
         where: {
@@ -43,7 +43,29 @@ router.get('/:idBox', async (req, res, next) => {
     }))
 
 })
+router.get('/everytag/:idBox', async (req, res, next) => {
 
+    try{
+        const { idBox } = req.params
+        
+        const response = await Tags.findAll({
+            attributes:['id', 'uep', 'idBox', 'idSector', 'client', 'typeDoc', 'keyOne', 'keyTwo', 'dateStart', 'dateEnd'],
+            where: {
+                idBox
+            }
+        })
+        return res.status(200).json({
+            error: false,
+            response
+        })
+    }catch(err){
+        return res.status(501).json({
+            error: true,
+            msg: "Erro interno"
+        })
+    }
+
+})
 router.post('/', (req, res, next) => {
     Tags.create(req.body)
     .then((data) => {

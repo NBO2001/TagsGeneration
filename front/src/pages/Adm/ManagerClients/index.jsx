@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../../config'
 import { Modal, PageBody }from '../../../components'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const ManagerClients = () => {
     
@@ -10,6 +12,20 @@ const ManagerClients = () => {
     const [ sector, setSector] = useState({})
     const [ listSector, setListSector] = useState([])
     const [ nameSector, setNameSector] = useState()
+
+    const notify = (tost,msg) => {
+        switch(tost){
+            case "Error":
+                return toast.error(msg);
+            case "Warn":
+                return toast.warn(msg);
+            case "Success":
+                return toast.success(msg);
+                
+            default:
+                return toast(msg);
+        }
+   };
 
     useEffect(() => {
         api.get('/listClients', headers)
@@ -65,6 +81,7 @@ const ManagerClients = () => {
         .then(({data}) => {
             if(!data.error){
                 listSectors(data.response.client)
+                notify('Success', "Adicionado com sucesso")
             }
         })
         .catch((err) => console.log(err))
@@ -90,16 +107,21 @@ const ManagerClients = () => {
     const sendSector = (e) => {
         e.preventDefault()
         api.post('/addItem', nameSector, headers)
-        .then(({data}) => console.log(data))
+        .then(({data}) => {
+            notify('Success', "Adicionado com sucesso")
+        })
         .catch((err) => console.log(err))
     }
 
     return (
-        <>  
+        <>  <ToastContainer />
             <PageBody>
                 <div>
                     <form onSubmit={sendDataBack}>
                         <input type="number" name="client" placeholder='Nº Cliente' min="1" onChange={addInformations} />
+                        <input type="text" name="clientName" placeholder='Nome do Cliente' onChange={addInformations} />
+                        <input type="url" name="logoUrl" placeholder='Logo do cliente'  onChange={addInformations} />
+                       
                         <button type="submit"> Adicionar Cliente</button>
                     </form>
                     <div>
