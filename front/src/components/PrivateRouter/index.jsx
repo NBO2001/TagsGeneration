@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
 import { Route, Redirect  } from "react-router-dom";
-import {authContext} from '../../authContext';
-const PrivateRouter = ({location, ...rest}) => {
-    let { auth } = useContext(authContext);
 
-    return auth.login ? (
+const PrivateRouter = ({location, ...rest}) => {
+
+  const auth = localStorage.getItem('auth/login');
+  console.log(auth)
+    return auth? (
       <Route {...rest} />
     ): (
       <Redirect

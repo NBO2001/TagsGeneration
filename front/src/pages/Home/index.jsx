@@ -1,16 +1,20 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { useHistory  } from "react-router-dom"
-import { authContext } from '../../authContext';
 import { sectorContext } from '../../sectorContext';
-import { PageBody } from '../../components'
+import { PageBody, FormBack, Selects, ModalHeard, 
+    ButtonsIcons, Buttons,ConteinnerUeps, DivItem, TagUep } from '../../components'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import api from '../../config';
+import maskUep from '../../utils/format/maskUep'
+
 function Home() {
 
-    const { auth } = useContext(authContext);
     const { setConfig } = useContext(sectorContext);
     const [ clients, setClients] = useState();
     const [ datas, setDatas] = useState({});
     const [ sectors, setSectors] = useState()
+    const [ ueps, setUeps ] = useState([]);
 
     let history = useHistory();
 
@@ -29,16 +33,30 @@ function Home() {
             
         })
     },[])
+    const notify = (msg) => toast.error(msg);
+
     const chnClient = async (e) => {
-       const { data } = await api.post('/listSectors', {client: e.target.value}, headers)
+       const { data } = await api.post('/listSectors', {client: e.value}, headers)
        if(!data.error){
             setDatas({
-                client: e.target.value
+                client: e.value
             })
-           setSectors(data.response)
+            const { data:dataueps } = await api.get(`/seachUep/${e.value}`)
+            if(!dataueps.error && dataueps.response.length){
+                setUeps(dataueps.response)
+            }
+            if(data.response.length){
+                setSectors(data.response)
+            }else{
+                setSectors([])
+                setUeps([])
+                notify("Nenhum setor encontrado!!")
+            }
+            
        }
         
     }
+    console.log(ueps)
     const seachCheckList = (id) => {
         api.post('/listCheck', {
             client: parseInt(datas.client),
@@ -58,15 +76,18 @@ function Home() {
     }
     
     const addValue = (e) => {
-        const sect = sectors.map((sector) => (parseInt(sector.id) === parseInt(e.target.value)) && {
+        
+        const sect = sectors.map((sector) => (parseInt(sector.id) === parseInt(e.value)) && {
             id: sector.id,
             sector: sector.sector
         })
+        
         const [result] = sect.filter(sect => sect);
         setDatas({
             ...datas,
             ...result
         })
+        console.log(e.value)
         seachCheckList(result.id)
     }
     
@@ -74,26 +95,61 @@ function Home() {
         if(sectors && sectors.length){
             setConfig(datas)
             history.push('/dash')
+        }else{
+            notify('Nenhum Setor definido')
         }
     }
     
     const insertClient = () => {
         history.push('/adm/clients')
     }
+    let arraTempClient = [];
+    let arraTemSector = [];
+    console.log(ueps)
     return (
         <PageBody>
-            <select onChange={chnClient}>
-                <option> --- </option>
-                { clients && clients.map((clien) => (<option value={clien.client} key={clien.client}>{clien.client}</option>))}
-            </select>
+            <ToastContainer />
+            <FormBack>
+                <ModalHeard>
+                    <ButtonsIcons type="button" onClick={() => insertClient()} />
+                </ModalHeard>
 
-            <h3>Setor:</h3>
-            <select onChange={addValue}>
-                <option value="null">----</option>
-                { sectors && sectors.map((sector) => ( <option key={sector.sector} value={sector.id}>{sector.sector}</option>))}
-            </select>
-            <button type="button" onClick={() => insertClient()}> Add Client </button>
-            <button type="button" onClick={() => redPage()}> Next </button>
+                <div>
+
+                    <Selects label="Cliente" onChange={chnClient} options={clients? clients.map((clien) => {
+                    arraTempClient.push({
+                        value: `${clien.client}`,
+                        label: `${clien.client}`
+                    })
+                    return arraTempClient
+                    }): []} />
+                    <Selects label="Setor"  onChange={addValue} options={sectors? sectors.map((sector) => {
+                        arraTemSector.push({
+                            value: `${sector.id}`,
+                            label: `${sector.sector}`
+                        })
+                        return arraTemSector
+                    }): []} />
+                    <Buttons width="200px" type="button" onClick={() => redPage()}> Next </Buttons>
+                </div>
+                <div></div>
+            </FormBack>
+            <FormBack>
+                    <ConteinnerUeps>
+                        {ueps && ueps.map((uep) => {
+                            return(
+                                <DivItem key={uep.id}>
+                                    <TagUep>
+                                        <p>{uep.client}</p>
+                                        <p>{maskUep('XXXXX',uep.idUep)}</p>
+                                    </TagUep>
+                                </DivItem>
+                            )
+                        })}
+                        
+                       
+                    </ConteinnerUeps>
+            </FormBack>
         </PageBody>
     )
 }

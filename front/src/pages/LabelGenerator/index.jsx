@@ -4,6 +4,7 @@ import api from '../../config'
 import { LogoTag, Tag, HeardTag, LineSector, FooterTag, 
     TagBody,TypeDoc, DocsDiv, BoxNumber } from '../../components'
 import formatDate from '../../utils/format/formatDate'
+import maskUep from  '../../utils/format/maskUep'
 
 const LabelGenerator = () => {
 
@@ -103,7 +104,7 @@ const LabelGenerator = () => {
                         <HeardTag>
                             <LogoTag src="https://www.accion.org/static/accion-logo.png" alt="accion" />
                             <BoxNumber>
-                                <p>{`${configClient.uep}.${box.idBox}`}</p>
+                                <p>{`${maskUep('XXXXX',configClient.uep)}.${box.idBox}`}</p>
                             </BoxNumber>
                         </HeardTag>
                         

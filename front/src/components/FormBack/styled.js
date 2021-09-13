@@ -6,9 +6,10 @@ export const BackForm = styled.div`
     background: #ffffff;
     border-radius: 20px;
     display: flex;
+    margin: 5px;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     @media screen and (max-width:922px) {
           width: 96vw;
      }

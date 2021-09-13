@@ -1,14 +1,15 @@
 import React, { useState, useContext } from 'react'
 import api from '../../config';
 import { useHistory } from "react-router-dom";
-import {authContext} from '../../authContext';
 import { PageBody, FormBack, FormLogin, Inputs, Buttons } from '../../components'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Auth = () => {
 
     const [ user, setUser ] = useState({});
-
-    let { setAuth } = useContext(authContext);
+    const notify = (msg) => toast.error(msg);
 
     let history = useHistory();
 
@@ -24,13 +25,26 @@ const Auth = () => {
    }
     const sendBack = (e) => {
         e.preventDefault()
+        if(!user.name){
+
+            notify("Preencha todos os campos")
+            return false;
+        }
         api.post('/listUsers', user, headers)
         .then(({ data:datas }) => {
             const { data: [ user ] } = datas;
-            user && setAuth({
-                login: true,
-                ...user
-            })
+            localStorage.removeItem('auth/id')
+            localStorage.removeItem('auth/name')
+            localStorage.removeItem('auth/login')
+            if(!user){
+                notify("Senha ou Usuário incorreto")
+            return false;
+            }
+
+            user && localStorage.setItem('auth/id', user.id)
+            user && localStorage.setItem('auth/name', user.name)
+            user && localStorage.setItem('auth/login', true)
+
             history.push('/home')
         })
         .catch((err) => {
@@ -42,7 +56,8 @@ const Auth = () => {
         <PageBody>
             <FormBack>
                 <FormLogin onSubmit={sendBack}>
-                    <Inputs type="text" name="name" required placeholder="Digite seu usuario" onChange={addValueUser}/>
+                     <ToastContainer />
+                    <Inputs type="text" name="name" placeholder="Digite seu usuario" onChange={addValueUser}/>
                     <Buttons type="submit"> Entrar</Buttons>
                 </FormLogin>
             </FormBack>

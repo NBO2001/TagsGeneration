@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 const Dash = () => {
 
-    const { auth } = useContext(authContext);
+    const userId = localStorage.getItem('auth/id')
     const { config } = useContext(sectorContext);
     const [data, setData] = useState({});
     const [ boxs, setBoxs ] = useState();
@@ -24,7 +24,7 @@ const Dash = () => {
     useEffect(() => {
         api.post('/seachUep', {
             client: config.client,
-            openingFor: auth.id,
+            openingFor: userId,
             uepOpen: 1
         }, headers)
         .then(( { data }) => {
@@ -65,7 +65,7 @@ const Dash = () => {
     const addUep = () => {
         api.post('/addUep', {
             client: parseInt(config.client),
-            openingFor: auth.id
+            openingFor: userId
         }, headers)
         .then(( { data }) => { 
 
@@ -84,7 +84,7 @@ const Dash = () => {
             uep: data.idUep,
             idBox: (idBox+1),
             idSector: config.sector,
-            openingFor:  auth.id
+            openingFor:  userId
         });
 
         if(!dataResponse.error){
@@ -148,7 +148,7 @@ const Dash = () => {
         const keyTwo = configGobal.keyTwo
         const dateStart = configGobal.dateStart
         const  dateEnd  = configGobal.dateEnd
-        const lastUpdate = auth.id;
+        const lastUpdate = userId;
         const valuesData = {
             uep,
             idBox,
@@ -236,14 +236,14 @@ const Dash = () => {
 
         <Modal open={modal.isOpen} onClose={() => setModal({...modal, isOpen: (!modal.isOpen)})}> 
                 <form onSubmit={sendDataBack}>
-                    {config.checkList.map((check) => {
+                    {config? config.checkList.map((check) => {
                         return(
                             <label>
                                 {check.docType}
                                 <input type="checkbox" onChange={inputsData} key={check.id} value={check.id} name={check.docType}></input>
                             </label>
                         )
-                    })}
+                    }): (<p>Error</p>)}
 
                     <input name="keyOne" onChange={addConfigGobal} placeholder="Primeira Chave" type="text" />
                     <input name="keyTwo" onChange={addConfigGobal} placeholder="Segunda chave" type="text" />
