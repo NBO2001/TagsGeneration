@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
 export const BackForm = styled.div`
-    width: 500px;
-    height: 400px;
+    width: ${(props) => props.width? props.width: "500px"};
+    height: ${(props) => props.height? props.height: "400px"};;
     background: #ffffff;
     border-radius: 20px;
     display: flex;

@@ -1,8 +1,8 @@
 import React from 'react'
 import {BackForm} from './styled'
-const FormBack = ({ children }) => {
+const FormBack = ({ children, ...rest }) => {
     return (
-        <BackForm>
+        <BackForm {...rest}>
             { children }
         </BackForm>
     )

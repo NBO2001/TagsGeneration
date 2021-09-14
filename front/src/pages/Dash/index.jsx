@@ -2,7 +2,7 @@ import React, { useEffect,useContext, useState} from 'react'
 import { sectorContext } from '../../sectorContext';
 import api from '../../config';
 import { Modal, PageBody, FormBack, Selects, FormLogin, Buttons, Inputs,
-     DivConnteiner, ConnteinerDocs }from '../../components'
+     DivConnteiner, ConnteinerDocs, ContennerButtons, ContennerBoxs }from '../../components'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import maskUep from '../../utils/format/maskUep';
@@ -94,7 +94,8 @@ const Dash = ({location, ...rest}) => {
     }
     
     const addBox = async () => {
-        let [tempA] = boxs.idBox;
+        try{
+            let [tempA] = boxs.idBox;
         const idBox = (tempA && tempA.idBox)? tempA.idBox: 0;
 
         const { data: dataResponse } = await api.post('/addBox', {
@@ -117,6 +118,11 @@ const Dash = ({location, ...rest}) => {
                 qntBoxs: (idBox+1)
             })
         }
+        }catch(err){
+            console.log(err)
+            notify('Error', "Ocorreu um error inesperado")
+        }
+        
     }
     const  searchDocs = async (id) => {
         
@@ -159,11 +165,11 @@ const Dash = ({location, ...rest}) => {
                 if(onlyBox){
                     if(onlyBox.idSector === config.sector){
                         return (
-                            <div key={onlyBox.id}>
+                            <ContennerBoxs key={onlyBox.id}>
                                 <h2>Index da Box:  {onlyBox.idBox}</h2>
                                 <h2> Setor: {onlyBox.idSector}</h2>
-                                <button onClick={ () => openModal(onlyBox.id)}> Inserir dados</button>
-                            </div>
+                                <Buttons height="40px" width="50%" onClick={ () => openModal(onlyBox.id)}> Inserir dados</Buttons>
+                            </ContennerBoxs>
                         )
                     }else{
                         return (
@@ -174,7 +180,7 @@ const Dash = ({location, ...rest}) => {
                         )
                     }
                 } })} 
-            { (buttonsNumbers != 0) && (<button onClick={addBox}> Add Box</button>) }
+            { (buttonsNumbers != 0) && (<Buttons width="50%" onClick={addBox}> Add Box</Buttons>) }
             </>)
         }  
     }
@@ -265,14 +271,19 @@ const Dash = ({location, ...rest}) => {
         <>
           <ToastContainer />
         <PageBody>
-            <FormBack>
+            <FormBack height="80vh" width="50vw">
                 {data && data.id? (
                     <>
-                    <h2>UEP: {maskUep('XXXXX',data.idUep)}</h2>
-                    <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
+                    <div>
+                        <h2>UEP: {maskUep('XXXXX',data.idUep)}</h2>
+                        <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
+
+                    </div>
                     {showBoxs()}
-                    <button onClick={() => openTags(`uep=${data.id}`)}> GerarTags </button>
-                    <button onClick={() => closedUep(data.id)}>Fechar Uep</button>
+                    <ContennerButtons>
+                        <Buttons width="50%" onClick={() => openTags(`uep=${data.id}`)}> GerarTags </Buttons>
+                        <Buttons width="50%" onClick={() => closedUep(data.id)}>Fechar Uep</Buttons>
+                    </ContennerButtons>
                     </>
                 ): (<ConnteinerDocs><Buttons width="90%" type="button" onClick={addUep}> Inserir Uep</Buttons></ConnteinerDocs>)}
             </FormBack>
