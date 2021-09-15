@@ -6,7 +6,7 @@ export const Line = styled.div`
     border-bottom: 0.5px solid black;
     align-items: center;
     justify-content: start;
-    height: 0.8cm;
+    min-height: 0.8cm;
     
 `
 export const SectorLeg = styled.h2`

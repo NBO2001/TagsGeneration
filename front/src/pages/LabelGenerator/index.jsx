@@ -95,7 +95,7 @@ const LabelGenerator = () => {
             seachUep(valueSeach[1])
         }
     },[])
-    console.log(configClient)
+    
     return (
         <TagBody>
           {boxs && boxs.map((box) => {

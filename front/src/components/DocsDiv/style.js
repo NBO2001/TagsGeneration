@@ -2,7 +2,7 @@ import React from "react"
 import styled from 'styled-components'
 
 export const DocList = styled.div`
-    height: 5.5cm;
+    min-height: 5.5cm;
     display: flex;
     flex-direction: column;
     justify-content: center;

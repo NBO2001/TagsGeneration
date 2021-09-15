@@ -5,6 +5,6 @@ export const Body = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    height: 15cm;
+    height: 100%;
     min-width: 100%;
 `
