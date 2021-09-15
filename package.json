@@ -3,8 +3,10 @@
     "version": "1.0.0",
     "scripts": {
         "client": "cd front && npm start",
-        "serv": "serve -s build",
+        "serv": "cd front && serve -s build",
         "server": "nodemon app.js",
+        "inst": "cd front && npm install && npm rum build",
+        "update": "git pull && npm rum inst",
         "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
         "proc": "concurrently --kill-others-on-fail \"npm run server\" \"npm run serv\""
     },
