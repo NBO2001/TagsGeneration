@@ -150,7 +150,7 @@ const Dash = ({location, ...rest}) => {
         })
 
     }
-  
+    
     const showBoxs  = () => {
 
         if(boxs){
@@ -193,9 +193,13 @@ const Dash = ({location, ...rest}) => {
         const idSector = parseInt(config.sector)
         const client = parseInt(config.client)
         const keyOne = configGobal.keyOne
+        if(!keyOne) return notify('Error', "Preencha os campos");
         const keyTwo = configGobal.keyTwo
+        if(!keyTwo) return notify('Error', "Preencha os campos");
         const dateStart = configGobal.dateStart
+        if(!dateStart) return notify('Error', "Preencha os campos");
         const  dateEnd  = configGobal.dateEnd
+        if(!dateEnd) return notify('Error', "Preencha os campos");
         const lastUpdate = userId;
         const valuesData = {
             uep,
@@ -219,6 +223,7 @@ const Dash = ({location, ...rest}) => {
                 
                 if(!data.error){
                     searchDocs(idBox)
+                    setConfigGobal({...configGobal, keyOne: "", keyTwo: ""})
                     notify('Success', "Documento adicionado com sucesso")
                 }else{
                     notify('Error', "Documento não adicionado")
@@ -267,6 +272,7 @@ const Dash = ({location, ...rest}) => {
          )
       }
     let typeDoc = [];
+    
     return (
         <>
           <ToastContainer />
@@ -277,7 +283,7 @@ const Dash = ({location, ...rest}) => {
                     <div>
                         <h2>UEP: {maskUep('XXXXX',data.idUep)}</h2>
                         <h2>Quantidade de Boxs: {data.qntBoxs}</h2>
-
+                     
                     </div>
                     {showBoxs()}
                     <ContennerButtons>
@@ -311,6 +317,7 @@ const Dash = ({location, ...rest}) => {
                         <Inputs height="40px" width="47%" name="dateStart" onChange={addConfigGobal} type="date" />
                         <Inputs height="40px" width="47%" name="dateEnd" onChange={addConfigGobal} type="date" />
                     </div>
+                    
                     <Buttons type="submit"> Enviar </Buttons>
                     <Buttons type="button" onClick={() => setModal({...modal, isOpen: (!modal.isOpen)})}>Sair sem finalizar</Buttons>
                 
