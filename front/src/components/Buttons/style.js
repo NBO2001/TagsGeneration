@@ -11,6 +11,20 @@ export const Button = styled.button`
     margin: 3px;
     width: ${(props) => props.width? props.width: "100%" };
     :hover{
-        background: linear-gradient(90deg, #0B9ED4 0%, #177AEB 100%); ;    
+        background: linear-gradient(90deg, #0B9ED4 0%, #177AEB 100%);  
     }
+`
+export const ButtonDanger = styled(Button)`
+    background: red;
+    border-color: red;
+    :hover{
+        background: #ffff;  
+    } 
+`
+export const ButtonDangerOutLine = styled(Button)`
+    background:  #ffff;
+    border-color: red;
+    :hover{
+        background: red;  
+    } 
 `

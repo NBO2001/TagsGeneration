@@ -15,6 +15,7 @@ const updateUepRouter = require('./Routes/Uep/updateUep');
 const seachUeoRouter = require('./Routes/Uep/seachUep')
 
 const addTagRouter = require('./Routes/Tag/addTag')
+const listTags = require('./Routes/Tag/listTags')
 
 const addClientRouter = require('./Routes/Clients/addClient');
 const listClientsRouter = require('./Routes/Clients/listClients')
@@ -48,6 +49,7 @@ app.use('/api/listCheck', listCheckListRouter)
 app.use('/api/seachUep', seachUeoRouter)
 app.use('/api/seachBox', seachBoxRouter)
 app.use('/api/updateBox', updateBoxRouter)
+app.use('/api/tag',listTags)
 
 app.use('/api/getueps', getUeps)
 

@@ -12,7 +12,7 @@ export const Overley = styled.div`
     width: 100vw;
     height: 100vh;
     background-color: rgba(78, 89, 131, 0.5);
-    z-index: 998;
+    z-index: 999;
 
 `;
 

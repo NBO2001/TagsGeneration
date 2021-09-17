@@ -5,6 +5,7 @@ import { LogoTag, Tag, HeardTag, LineSector, FooterTag,
     TagBody,TypeDoc, DocsDiv, BoxNumber } from '../../components'
 import formatDate from '../../utils/format/formatDate'
 import maskUep from  '../../utils/format/maskUep'
+import returnDateOrder from '../../utils/format/returnDateOrder'
 
 const LabelGenerator = () => {
 
@@ -117,7 +118,7 @@ const LabelGenerator = () => {
                         </DocsDiv>
         
                         <FooterTag>
-                            {formatDate(box.dateStart)} - {formatDate(box.dateEnd)}
+                            {returnDateOrder(formatDate(box.dateStart), formatDate(box.dateEnd))}
                         </FooterTag>
                     </Tag>
                 )

@@ -2,11 +2,12 @@ import React, { useEffect,useContext, useState} from 'react'
 import { sectorContext } from '../../sectorContext';
 import api from '../../config';
 import { Modal, PageBody, FormBack, Selects, FormLogin, Buttons, Inputs,
-     DivConnteiner, ConnteinerDocs, ContennerButtons, ContennerBoxs }from '../../components'
+     DivConnteiner, ConnteinerDocs, ContennerButtons, ContennerBoxs, SubModal }from '../../components'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import maskUep from '../../utils/format/maskUep';
 import { Redirect  } from "react-router-dom";
+import getItemDate from '../../utils/format/getItemDate'
 
 const Dash = ({location, ...rest}) => {
 
@@ -18,6 +19,9 @@ const Dash = ({location, ...rest}) => {
     const [ doctype, setDoctype] = useState([])
     const [configGobal, setConfigGobal] = useState({});
     const [listDocs, setListDocs ] = useState([])
+    const [ subModal, setSubModal ] = useState(false)
+    const [ tag, setTag ] = useState({})
+    const [ tagUpdate, setTagUpdate] = useState({})
     
     const headers = {
         'headers': {
@@ -272,10 +276,72 @@ const Dash = ({location, ...rest}) => {
          )
       }
     let typeDoc = [];
-    
+    const openDetalhe = async (id) => {
+        try{
+            
+            const { data } = await api.get(`/tag/${id}`);
+
+            if(data.error) return notify('Error', 'Erro inesperado!!!')
+
+            const { response } = data;
+
+            if(response.length){
+                const [ temA ] = response
+                
+                setTag(temA)
+                setSubModal(true)
+
+            }else{
+                notify('Error', 'Erro inesperado!!!')
+            }
+          
+            
+        }catch(err){
+            notify('Error', 'Erro inesperado!!!')
+        }
+       
+    }
+    const deleteDoc = async (id) => {
+        try{
+            
+            const { data } = await api.delete(`/tag/${id}`);
+
+            if(data.error) return notify('Error', 'Erro inesperado!!!')
+
+            notify('Success', 'Apagado com sucesso!!')
+            searchDocs(parseInt(modal.inClick))
+            setSubModal(false)
+            
+        }catch(err){
+            notify('Error', 'Erro inesperado!!!')
+        }
+    } 
+    const onChanceUpdate = (e, id) => {
+        
+        setTagUpdate({...tagUpdate, id,
+        [e.target.name]: e.target.value})
+    }
+    const updateForBack = async (e) => {
+        
+        try{
+            e.preventDefault()
+
+            const { data } = await api.put('/tag', tagUpdate, headers)
+            
+            if(data.error) return notify('Error', 'Erro inesperado!!!!')
+
+            notify('Success', 'Alterado com sucesso!!!!')
+            searchDocs(parseInt(modal.inClick))
+            setSubModal(false)
+
+        }catch(err){
+            notify('Error', 'Erro inesperado!!!!')
+        }
+
+    }
     return (
         <>
-          <ToastContainer />
+        <ToastContainer />
         <PageBody>
             <FormBack height="80vh" width="50vw">
                 {data && data.id? (
@@ -295,7 +361,19 @@ const Dash = ({location, ...rest}) => {
             </FormBack>
 
         </PageBody>
-
+        <SubModal  open={subModal} onClose={() => setSubModal(!subModal)}>
+            <FormLogin onSubmit={updateForBack}>
+                     <p> {tag.typeDoc} </p>
+                     <Inputs height="40px" width="47%" name="keyOne" onChange={e => onChanceUpdate(e,tag.id)} defaultValue={tag.keyOne} placeholder="Primeira Chave" type="text" />
+                     <Inputs height="40px" width="47%" name="keyTwo" onChange={e => onChanceUpdate(e, tag.id)} defaultValue={tag.keyTwo} placeholder="Segunda chave" type="text" />
+                     <Inputs height="40px" width="47%" name="dateStart" onChange={e => onChanceUpdate(e, tag.id)} defaultValue={getItemDate(tag.dateStart, 'full')} type="date" />
+                    <Inputs height="40px" width="47%" name="dateEnd" onChange={e => onChanceUpdate(e, tag.id)} defaultValue={getItemDate(tag.dateEnd, 'full')}type="date" />
+                    
+                    <Buttons type="submit"> Alterar </Buttons>
+            </FormLogin>
+            <Buttons typeButton="Danger-Outline" onClick={() => deleteDoc(tag.id)} type="button"> Apagar </Buttons>
+            <Buttons type="button" onClick={() => setSubModal(!subModal)}> Fechar  </Buttons>
+        </SubModal>
         <Modal minwidth="90vw" open={modal.isOpen} onClose={() => setModal({...modal, isOpen: (!modal.isOpen)})}> 
             <DivConnteiner>
 
@@ -307,7 +385,6 @@ const Dash = ({location, ...rest}) => {
                     })
                     return typeDoc
                     }): []} />
-                    
 
                     <div>
                         <Inputs height="40px" width="47%" name="keyOne" onChange={addConfigGobal} placeholder="Primeira Chave" type="text" />
@@ -326,8 +403,10 @@ const Dash = ({location, ...rest}) => {
 
                 <FormBack>
                     <ConnteinerDocs>
+                    
                     { listDocs && listDocs.map((listDoc) => {
-                        return(<p key={listDoc.id}>{listDoc.typeDoc} - {listDoc.keyOne} - {listDoc.keyTwo} </p>)
+                        return(<p key={listDoc.id}>{listDoc.typeDoc} - {listDoc.keyOne} - {listDoc.keyTwo} 
+                        <button type='button' onClick={() => openDetalhe(listDoc.id)}> Detalhe </button> </p>)
                     })}
                     </ConnteinerDocs>
                     
