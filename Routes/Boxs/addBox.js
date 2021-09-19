@@ -61,20 +61,22 @@ router.post('/upimg', async (req, res, next) => {
 
         let path = (`${__dirname}`).split('/');
 
+        let pathEnd;
         if(path.length > 1){
-
+            pathEnd = (`${path[0]}/${path[1]}/${path[2]}/imgs/`)
         }else{
 
             path = (`${__dirname}`).split('\\');
+            pathEnd = (`${path[0]}\\${path[1]}\\imgs\\`)
         }
         
-        const pathEnd = (`${path[0]}/${path[1]}/${path[2]}`)
+        
         
         const form = new formidable.IncomingForm();
         form.parse(req, function (err, fields, files) {
             const { File:file } = files;
             const oldpath =  file.path;
-            const newpath = `${pathEnd}/imgs/`+ fields.Name;
+            const newpath = `${pathEnd}`+ fields.Name;
             fs.rename(oldpath, newpath, (res) => res)
         })
 
