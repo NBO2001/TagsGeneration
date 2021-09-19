@@ -30,7 +30,7 @@ const returnDateOrder = (dateOne, dateTwo) => {
             return `${dateOne} - ${dateTwo}`
         }
 
-        return false
+        return `${dateOne} - ${dateTwo}`
 
     }catch(err){
         return false
