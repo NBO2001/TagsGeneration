@@ -53,5 +53,41 @@ router.post('/', async (req, res, next) => {
     // })
 
 })
+router.post('/upimg', async (req, res, next) => {
 
+    try{
+        const formidable = require('formidable');
+        const fs = require('fs');
+
+        let path = (`${__dirname}`).split('/');
+
+        if(path.length > 1){
+
+        }else{
+
+            path = (`${__dirname}`).split('\\');
+        }
+        
+        const pathEnd = (`${path[0]}/${path[1]}/${path[2]}`)
+        
+        const form = new formidable.IncomingForm();
+        form.parse(req, function (err, fields, files) {
+            const { File:file } = files;
+            const oldpath =  file.path;
+            const newpath = `${pathEnd}/imgs/`+ fields.Name;
+            fs.rename(oldpath, newpath, (res) => res)
+        })
+
+        res.status(200).json({
+            error: false,
+            msg: "Imagem adicionada com sucesso"
+        })
+    }catch(err){
+        res.status(500).json({
+            error: true,
+            err
+        })
+    }
+
+})
 module.exports = router;

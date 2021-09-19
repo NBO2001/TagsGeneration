@@ -22,6 +22,7 @@ const Dash = ({location, ...rest}) => {
     const [ subModal, setSubModal ] = useState(false)
     const [ tag, setTag ] = useState({})
     const [ tagUpdate, setTagUpdate] = useState({})
+    const [selectedFile, setSelectedFile] = useState();
     
     const headers = {
         'headers': {
@@ -154,7 +155,29 @@ const Dash = ({location, ...rest}) => {
         })
 
     }
-    
+    const addImg = (e) => {
+        setSelectedFile(e.target.files[0]);
+    }
+    const sendImg = (e,uep, sector ,idbox) => {
+        e.preventDefault()
+        const name = selectedFile.name.split('.')
+        const arqName = `S${sector}U${uep}B${idbox}.${name[1]}`;
+
+
+		const formData = new FormData();
+
+        formData.append('File', selectedFile);
+        formData.append('Name', arqName);
+        const headers = {
+            'headers': {
+                'Content-Type': 'application/json'
+            }
+       }
+	
+        api.post('/addBox/upimg', formData, headers)
+        .then((respon) =>notify('Success', "Imagem adicionada com sucesso!!"))
+        .catch((err) => notify('Error', "Ocorreu um error inesperado"))
+    }
     const showBoxs  = () => {
 
         if(boxs){
@@ -172,6 +195,8 @@ const Dash = ({location, ...rest}) => {
                             <ContennerBoxs key={onlyBox.id}>
                                 <h2>Index da Box:  {onlyBox.idBox}</h2>
                                 <h2> Setor: {onlyBox.idSector}</h2>
+                                <input type="file" name="file" accept="image/*" capture="camera"  onChange={addImg} />
+                                <button onClick={e => sendImg(e,parseInt(data.id), parseInt(config.sector), onlyBox.idBox)}>Enviar img</button>
                                 <Buttons height="40px" width="50%" onClick={ () => openModal(onlyBox.id)}> Inserir dados</Buttons>
                             </ContennerBoxs>
                         )
@@ -180,6 +205,8 @@ const Dash = ({location, ...rest}) => {
                             <div key={onlyBox.id}>
                                 <h2>Index da Box:  {onlyBox.idBox}</h2>
                                 <h2> Setor: {onlyBox.idSector}</h2>
+                                <input type="file" name="file" accept="image/*" capture="camera"  onChange={addImg} />
+                                <button onClick={e => sendImg(e,parseInt(data.id), parseInt(config.sector), onlyBox.idBox)}>Enviar img</button>
                             </div>
                         )
                     }
@@ -256,7 +283,7 @@ const Dash = ({location, ...rest}) => {
         .then((response) => {
             setData({})
             notify('Success', 'Uep Fechada com sucesso')
-            openTags(`uep=${data.id}`)
+            // openTags(`uep=${data.id}`)
 
         })
         .catch(() => console.log("Err"))
